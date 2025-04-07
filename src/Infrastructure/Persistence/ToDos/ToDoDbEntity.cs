@@ -1,9 +1,11 @@
 using SourceName.Domain.ToDos;
+#pragma warning disable CS8618, CS9264
 
 namespace SourceName.Infrastructure.Persistence.ToDos;
 
 public class ToDoDbEntity
 {
+    // For Dapper
     public ToDoDbEntity() { }
     
     public ToDoDbEntity(ToDoEntity toDo)
