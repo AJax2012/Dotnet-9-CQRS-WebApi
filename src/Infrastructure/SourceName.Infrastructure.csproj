@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Dapper.SqlBuilder" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Application\SourceName.Application.csproj" />
+    <ProjectReference Include="..\Domain\SourceName.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

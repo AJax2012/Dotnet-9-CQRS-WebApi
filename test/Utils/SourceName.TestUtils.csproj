@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <PackageReference Include="AutoBogus" />
+    <PackageReference Include="Bogus" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="AutoBogus" />
+    <Using Include="Bogus" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Application\SourceName.Application.csproj" />
+    <ProjectReference Include="..\..\src\Contracts\SourceName.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Domain\SourceName.Domain.csproj" />
+  </ItemGroup>
+  
+</Project>

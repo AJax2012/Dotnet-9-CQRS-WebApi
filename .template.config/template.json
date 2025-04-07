@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Adam Gardner",
+  "classifications": [
+    "Web",
+    "API"
+  ],
+  "identity": "DotnetCqrsTemplate",
+  "name": "Dotnet CQRS Template",
+  "shortName": "cqrs",
+  "sourceName": "SourceName",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "preferNameDirectory": true,
+  "symbols": {
+    "IncludeExample": {
+      "type": "parameter",
+      "description": "Includes example ToDo endpoints, models, commands, queries, handlers, domain object, and repository",
+      "datatype": "bool",
+      "defaultValue": "false"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!IncludeExample)",
+          "exclude": [
+            "**/ToDo/**"
+          ]
+        },
+        {
+          "exclude": [
+            "**/[Bb]in/**",
+            "**/[Oo]bj/**",
+            ".template.config/**",
+            ".vs/**",
+            ".idea/**",
+            ".git/**",
+            "example/**",
+            "**/logs/**",
+            "**/*.filelist",
+            "**/*.user",
+            "**/*.lock.json",
+            "README.md"
+          ]
+        }
+      ]
+    }
+  ]
+}

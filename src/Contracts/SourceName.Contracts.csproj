@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <NoWarn>CA1515;NU1504;NU1507</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="NetEscapades.EnumGenerators" />
+  </ItemGroup>
+
+</Project>

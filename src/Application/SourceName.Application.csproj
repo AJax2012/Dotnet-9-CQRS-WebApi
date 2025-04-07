@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <ItemGroup>
+    <PackageReference Include="ErrorOr" />
+    <PackageReference Include="FastEndpoints" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\SourceName.Contracts.csproj" />
+    <ProjectReference Include="..\Domain\SourceName.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
