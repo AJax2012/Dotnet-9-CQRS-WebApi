@@ -2,7 +2,6 @@ using System.Text;
 
 using FastEndpoints.Security;
 
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 using SourceName.Api.Loaders.Models;
