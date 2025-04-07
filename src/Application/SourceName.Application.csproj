@@ -3,6 +3,9 @@
   <ItemGroup>
     <PackageReference Include="ErrorOr" />
     <PackageReference Include="FastEndpoints" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="NetEscapades.EnumGenerators" />
+    <PackageReference Include="NSubstitute" />
   </ItemGroup>
 
   <ItemGroup>

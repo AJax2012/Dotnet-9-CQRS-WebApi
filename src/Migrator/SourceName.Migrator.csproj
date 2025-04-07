@@ -4,6 +4,7 @@
     <PackageReference Include="FluentMigrator" />
     <PackageReference Include="FluentMigrator.Runner" />
     <PackageReference Include="FluentMigrator.Runner.Postgres" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
   
   <ItemGroup>
