@@ -1,10 +1,8 @@
 using FastEndpoints;
+
 using FluentValidation;
 
-using SourceName.Contracts.ToDos;
-using SourceName.Contracts.ToDos.Requests;
-
-namespace SourceName.Api.ToDos.Validators;
+namespace SourceName.Api.ToDos.Create;
 
 internal class CreateToDoRequestValidator : Validator<CreateToDoRequest>
 {

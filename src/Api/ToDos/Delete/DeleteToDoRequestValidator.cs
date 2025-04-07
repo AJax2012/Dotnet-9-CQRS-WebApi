@@ -1,9 +1,8 @@
 using FastEndpoints;
+
 using FluentValidation;
 
-using SourceName.Contracts.ToDos.Requests;
-
-namespace SourceName.Api.ToDos.Validators;
+namespace SourceName.Api.ToDos.Delete;
 
 internal class DeleteToDoRequestValidator : Validator<DeleteToDoRequest>
 {

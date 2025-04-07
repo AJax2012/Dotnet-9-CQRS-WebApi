@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 
 using SourceName.Application.ToDos.Models;
-using SourceName.Contracts.ToDos.Responses;
 
 namespace SourceName.Api.ToDos;
 

@@ -1,12 +1,11 @@
 using FastEndpoints;
 
 using SourceName.Api.Extensions;
+using SourceName.Api.ToDos.ExampleResponses;
+using SourceName.Api.ToDos.GetById;
 using SourceName.Application.ToDos.Commands;
-using SourceName.Contracts.ToDos.Examples;
-using SourceName.Contracts.ToDos.Requests;
-using SourceName.Contracts.ToDos.Responses;
 
-namespace SourceName.Api.ToDos.Endpoints;
+namespace SourceName.Api.ToDos.Create;
 
 internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoResponse>
 {

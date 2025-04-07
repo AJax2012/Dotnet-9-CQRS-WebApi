@@ -1,40 +1,36 @@
 using FastEndpoints;
 
 using SourceName.Api.Extensions;
-using SourceName.Application.ToDos.Commands;
-using SourceName.Contracts.ToDos.Examples;
-using SourceName.Contracts.ToDos.Requests;
-using SourceName.Contracts.ToDos.Responses;
+using SourceName.Api.ToDos.ExampleResponses;
+using SourceName.Application.ToDos.Queries;
 
-namespace SourceName.Api.ToDos.Endpoints;
+namespace SourceName.Api.ToDos.GetById;
 
-internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
+internal class GetToDoByIdEndpoint : Endpoint<GetToDoByIdRequest, ToDoResource>
 {
     public override void Configure()
     {
-        Put("/{id:guid}");
+        Get("/{id:guid}");
         Group<ToDosGroup>();
         
         Description(x => x
-            .Accepts<UpdateToDoRequest>("application/json")
+            .Accepts<GetToDoByIdRequest>()
             .Produces<ToDoResource>(StatusCodes.Status200OK, "application/json")
             .ProducesProblemFE()
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithName("UpdateToDo"));
+            .WithName("GetToDoById"));
         
         Summary(s =>
         {
-            s.Summary = "Update a ToDo by id";
-            s.Description = "Update a ToDo by id";
-            s.ExampleRequest = ToDoRequestExamples.UpdateToDoRequest;
+            s.Summary = "Get a ToDo by id";
+            s.Description = "Get a ToDo by id";
+            s.ExampleRequest = ToDoRequestExamples.GetToDoByIdRequest;
             s.ResponseExamples[200] = ToDoResponseExamples.ToDoResource;
             s.Responses[404] = ToDoResponseExamples.NotFoundResponse;
-            s.Responses[500] = ToDoResponseExamples.SqlErrorResponse;
         });
     }
     
-    public override async Task HandleAsync(UpdateToDoRequest request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(GetToDoByIdRequest request, CancellationToken cancellationToken)
     {
         if (ValidationFailed)
         {
@@ -43,7 +39,7 @@ internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
         }
         
         ArgumentNullException.ThrowIfNull(request);
-        var result = await new UpdateToDoCommand(request.Id, request.UserId, request.Title, request.IsCompleted)
+        var result = await new GetToDoByIdQuery(request.Id, request.UserId)
             .ExecuteAsync(cancellationToken);
         
         await result.Match(

@@ -25,7 +25,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Api\SourceName.Api.csproj" />
-    <ProjectReference Include="..\..\..\src\Contracts\SourceName.Contracts.csproj" />
     <ProjectReference Include="..\..\Utils\SourceName.TestUtils.csproj" />
   </ItemGroup>
   

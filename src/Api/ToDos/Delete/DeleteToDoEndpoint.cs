@@ -1,11 +1,10 @@
 using FastEndpoints;
 
 using SourceName.Api.Extensions;
+using SourceName.Api.ToDos.ExampleResponses;
 using SourceName.Application.ToDos.Commands;
-using SourceName.Contracts.ToDos.Examples;
-using SourceName.Contracts.ToDos.Requests;
 
-namespace SourceName.Api.ToDos.Endpoints;
+namespace SourceName.Api.ToDos.Delete;
 
 internal class DeleteToDoEndpoint : Endpoint<DeleteToDoRequest>
 {

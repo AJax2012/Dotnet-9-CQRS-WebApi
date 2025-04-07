@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Api\SourceName.Api.csproj" />
     <ProjectReference Include="..\..\src\Application\SourceName.Application.csproj" />
-    <ProjectReference Include="..\..\src\Contracts\SourceName.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Domain\SourceName.Domain.csproj" />
   </ItemGroup>
   

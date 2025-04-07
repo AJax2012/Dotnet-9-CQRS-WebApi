@@ -8,7 +8,6 @@
     <Project Path="src\Api\SourceName.Api.csproj" Type="C#" />
     <Project Path="src\AppHost\SourceName.AppHost.csproj" Type="C#" />
     <Project Path="src\Application\SourceName.Application.csproj" Type="C#" />
-    <Project Path="src\Contracts\SourceName.Contracts.csproj" Type="C#" />
     <Project Path="src\Domain\SourceName.Domain.csproj" Type="C#" />
     <Project Path="src\Infrastructure\SourceName.Infrastructure.csproj" Type="C#" />
     <Project Path="src\Migrator\SourceName.Migrator.csproj" Type="C#" />
