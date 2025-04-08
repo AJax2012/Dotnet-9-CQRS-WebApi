@@ -47,7 +47,7 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
                     .WithGlobalConnectionString(_pgContainer.GetConnectionString())
-                    .ScanIn(typeof(AddToDosTable).Assembly).For.Migrations())
+                    .ScanIn(typeof(IMigrationsMarker).Assembly).For.Migrations())
                 .BuildServiceProvider(false);
         });
     }
