@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/template",
+  "$schema": "http://json.schemastore.org/template",
   "author": "Adam Gardner",
   "classifications": [
     "Web",
@@ -19,7 +19,7 @@
       "type": "parameter",
       "description": "Includes example ToDo endpoints, models, commands, queries, handlers, domain object, repository, and tests",
       "datatype": "bool",
-      "defaultValue": false
+      "defaultValue": "false"
     }
   },
   "sources": [
@@ -30,7 +30,7 @@
           "exclude": [
             "**/ToDos/**",
             "**/ToDoEndpoints/**",
-            "**/Migrations/**"
+            "**/Migrations/*ToDos*"
           ]
         },
         {
