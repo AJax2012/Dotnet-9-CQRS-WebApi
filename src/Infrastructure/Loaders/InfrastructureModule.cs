@@ -1,14 +1,8 @@
-using System.Data;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Npgsql;
-
-using SourceName.Application.ToDos.Contracts;
 using SourceName.Infrastructure.Persistence;
 using SourceName.Infrastructure.Persistence.PostgreSql;
-using SourceName.Infrastructure.Persistence.ToDos;
 
 namespace SourceName.Infrastructure.Loaders;
 
