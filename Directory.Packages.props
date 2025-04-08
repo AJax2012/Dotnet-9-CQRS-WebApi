@@ -25,6 +25,11 @@
     <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="9.0.1" />
     <PackageVersion Include="Serilog.Sinks.File" Version="6.0.0" />
+    
+    <!-- Aspire -->
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.1.0" />
+    <PackageVersion Include="Aspire.Npgsql" Version="9.1.0" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.1.0" />
    
     <!-- OTEL -->
     <PackageVersion Include="OpenTelemetry" Version="1.11.2" />
