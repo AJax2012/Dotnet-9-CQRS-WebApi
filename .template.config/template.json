@@ -17,7 +17,7 @@
   "symbols": {
     "IncludeExample": {
       "type": "parameter",
-      "description": "Includes example ToDo endpoints, models, commands, queries, handlers, domain object, and repository",
+      "description": "Includes example ToDo endpoints, models, commands, queries, handlers, domain object, repository, and tests",
       "datatype": "bool",
       "defaultValue": "false"
     }
@@ -28,7 +28,9 @@
         {
           "condition": "(!IncludeExample)",
           "exclude": [
-            "**/ToDo/**"
+            "**/ToDos/**",
+            "**/ToDoEndpoints/**",
+            "**/Migrations/**"
           ]
         },
         {
