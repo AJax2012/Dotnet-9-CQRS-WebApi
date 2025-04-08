@@ -9,7 +9,7 @@ builder.Services.AddFluentMigratorCore()
     .ConfigureRunner(rb => rb
         .AddPostgres()
         .WithGlobalConnectionString(configuration.GetConnectionString("Default"))
-        .ScanIn(typeof(AddToDosTable).Assembly).For.Migrations())
+        .ScanIn(typeof(IMigrationsMarker).Assembly).For.Migrations())
     .AddLogging(lb => lb.AddFluentMigratorConsole())
     .BuildServiceProvider(false);
 
