@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using SourceName.Api.ToDos.Create;
 using SourceName.Test.Integration.Auth;
 using SourceName.Test.Integration.VerifyConfig;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Integration.ToDoEndpoints;
 

@@ -6,7 +6,7 @@ namespace SourceName.Api.ToDos;
 public static class ToDoConstants
 {
     /// <summary>
-    /// Max length of to do title
+    /// Max length of to do toDoTitle
     /// </summary>
     public const int TitleMaxLength = 100;
 }

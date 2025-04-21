@@ -1,6 +1,6 @@
 using SourceName.Domain.ToDos;
 
-namespace SourceName.TestUtils.Fakers.ToDos;
+namespace SourceName.TestUtils.ToDos;
 
 public static class ToDoEntityFaker
 {
@@ -8,6 +8,6 @@ public static class ToDoEntityFaker
 
     public static List<ToDoEntity> Generate(int count = 1) => 
         Enumerable.Range(1 , count)
-            .Select(i => new ToDoEntity(EntityCreatedByUserId, new Faker().Random.Words(), i))
+            .Select(i => new ToDoEntity(EntityCreatedByUserId, new(new Faker().Random.Words(3)), i))
             .ToList();
 }

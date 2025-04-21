@@ -5,7 +5,7 @@ using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Queries;
 using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Commands;
 
@@ -49,7 +49,7 @@ public class CreateToDoCommandHandlerTest
         
         _logger.Received()
             .Information(
-                "ToDo with title {Title} already exists for user {UserId}", 
+                "ToDo with toDoTitle {Title} already exists for user {UserId}", 
                 _createToDoCommand.Title, 
                 _createToDoCommand.UserId);
         
@@ -85,8 +85,8 @@ public class CreateToDoCommandHandlerTest
         await _toDoRepository.Received()
             .CreateAsync(Arg.Is<ToDoEntity>(x =>
                     x.CreatedByUserId == _createToDoCommand.UserId &&
-                    x.Title == _createToDoCommand.Title &&
-                    x.DisplayOrder == 1),
+                    x.Title.Value == _createToDoCommand.Title &&
+                    x.Status.DisplayOrder == 1),
                 CancellationToken.None);
     }
     

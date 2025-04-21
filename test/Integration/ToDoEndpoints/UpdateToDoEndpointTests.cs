@@ -4,7 +4,7 @@ using SourceName.Api.ToDos.Create;
 using SourceName.Api.ToDos.Update;
 using SourceName.Test.Integration.Auth;
 using SourceName.Test.Integration.VerifyConfig;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Integration.ToDoEndpoints;
 
@@ -55,7 +55,7 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     {
         var updateRequest = new UpdateToDoRequest
         {
-            Title = "Updated title", 
+            Title = "Updated toDoTitle", 
             IsCompleted = false,
         };
         

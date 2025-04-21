@@ -7,59 +7,44 @@ namespace SourceName.Domain.ToDos;
 public class ToDoEntity : AuditableGuidEntity
 {
     public Guid CreatedByUserId { get; }
-    public string Title { get; private set; }
-    public bool IsCompleted { get; private set; }
-    public int? DisplayOrder { get; private set; }
+    public ToDoTitle Title { get; private set; }
+    public ToDoStatus Status { get; private set; }
     
     public ToDoEntity(
         Guid createdByUserid,
-        string title,
+        ToDoTitle title,
         int displayOrder) : base()
     {
         CreatedByUserId = createdByUserid;
         Title = title;
-        DisplayOrder = displayOrder;
-        IsCompleted = false;
+        Status = new(false, displayOrder);
     }
     
     [JsonConstructor]
     public ToDoEntity(
         Guid id, 
         Guid createdByUserid, 
-        string title,
-        bool isCompleted,
+        ToDoTitle title,
+        ToDoStatus status,
         DateTime createdAt, 
-        DateTime updatedAt, 
-        int? displayOrder = null) 
+        DateTime updatedAt) 
         : base(id, createdAt, updatedAt)
     {
         CreatedByUserId = createdByUserid;
         Title = title;
-        DisplayOrder = displayOrder;
-        IsCompleted = isCompleted;
+        Status = new(status.IsCompleted, status.DisplayOrder);
     }
 
     public void Update(string title, bool isCompleted)
     {
-        Title = title;
-        IsCompleted = isCompleted;
-
-        if (isCompleted)
-        {
-            DisplayOrder = null;
-        }
-        
+        Title = new(title);
+        Status.Update(isCompleted, null);
         Update();
     }
 
     public void UpdateOrder(int order)
     {
-        if (IsCompleted)
-        {
-            return;
-        }
-        
-        DisplayOrder = order;
+        Status.SetDisplayOrder(order);
         Update();
     }
 }

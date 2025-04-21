@@ -3,7 +3,7 @@ using SourceName.Application.ToDos.Queries;
 using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 
-namespace SourceName.TestUtils.Fakers.ToDos;
+namespace SourceName.TestUtils.ToDos;
 
 public static class GetToDosFilteredQueryFaker
 {

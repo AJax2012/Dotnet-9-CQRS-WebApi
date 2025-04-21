@@ -24,7 +24,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger l
 
         if (existingToDo is not null)
         {
-            _logger.Information("ToDo with title {Title} already exists for user {UserId}", request.Title, request.UserId);
+            _logger.Information("ToDo with toDoTitle {Title} already exists for user {UserId}", request.Title, request.UserId);
             return ToDoErrors.Conflict;
         }
 
@@ -38,7 +38,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger l
                 Title: null
             ), ct);
 
-        var toDo = new ToDoEntity(request.UserId, request.Title, toDoCount + 1);
+        var toDo = new ToDoEntity(request.UserId, new(request.Title), toDoCount + 1);
 
         var rowsAffected = await _toDoRepository.CreateAsync(toDo, ct);
 

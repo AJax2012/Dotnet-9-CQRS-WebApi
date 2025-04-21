@@ -4,7 +4,7 @@ using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Queries;
 
@@ -64,8 +64,8 @@ public class GetFilteredToDosQueryHandlerTest
                 ),
                 Arg.Is<ToDoEntity>(x => 
                     x.Id == cursorEntity.Id &&
-                    x.DisplayOrder == cursorEntity.DisplayOrder &&
-                    x.Title == cursorEntity.Title),
+                    x.Status.DisplayOrder == cursorEntity.Status.DisplayOrder &&
+                    x.Title.Value == cursorEntity.Title.Value),
                 Arg.Any<CancellationToken>());
     }
 

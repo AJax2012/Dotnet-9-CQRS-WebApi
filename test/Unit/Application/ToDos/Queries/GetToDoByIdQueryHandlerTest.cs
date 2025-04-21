@@ -4,7 +4,7 @@ using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Queries;
 

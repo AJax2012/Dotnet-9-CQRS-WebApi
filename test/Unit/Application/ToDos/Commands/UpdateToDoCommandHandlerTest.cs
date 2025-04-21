@@ -4,7 +4,7 @@ using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Commands;
 
@@ -86,8 +86,8 @@ public class UpdateToDoCommandHandlerTest
 
         await _toDoRepository.Received()
             .UpdateAsync(Arg.Is<ToDoEntity>(x =>
-                    x.Title == request.Title &&
-                    x.IsCompleted == request.IsCompleted),
+                    x.Title.Value == request.Title &&
+                    x.Status.IsCompleted == request.IsCompleted),
                 CancellationToken.None);
     }
     

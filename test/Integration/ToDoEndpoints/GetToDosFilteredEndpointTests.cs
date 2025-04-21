@@ -45,7 +45,7 @@ public class GetToDosFilteredEndpointTests : IClassFixture<ApplicationApiFactory
     [Fact]
     public async Task Returns_404_NotFound_WhenToDosNotFound()
     {
-        var actual = await _client.GetAsync("/todos?title=Test");
+        var actual = await _client.GetAsync("/todos?title=NotFound");
         await Verify(actual, _verifySettings);
     }
 }

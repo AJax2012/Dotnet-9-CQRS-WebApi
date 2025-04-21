@@ -12,9 +12,9 @@ public class ToDoDbEntity
     {
         Id = toDo.Id;
         CreatedByUserId = toDo.CreatedByUserId;
-        Title = toDo.Title;
-        IsCompleted = toDo.IsCompleted;
-        DisplayOrder = toDo.DisplayOrder;
+        Title = toDo.Title.Value;
+        IsCompleted = toDo.Status.IsCompleted;
+        DisplayOrder = toDo.Status.DisplayOrder;
         CreatedAt = toDo.CreatedAt;
         UpdatedAt = toDo.UpdatedAt;
     }
@@ -29,11 +29,10 @@ public class ToDoDbEntity
         return new(
             dbEntity.Id,
             dbEntity.CreatedByUserId,
-            dbEntity.Title,
-            dbEntity.IsCompleted,
+            new(dbEntity.Title),
+            new(dbEntity.IsCompleted, dbEntity.DisplayOrder),
             dbEntity.CreatedAt,
-            dbEntity.UpdatedAt,
-            dbEntity.DisplayOrder);
+            dbEntity.UpdatedAt);
     }
     
     public Guid Id { get; }

@@ -1,8 +1,14 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+#if IncludeExample
+using SourceName.Application.ToDos.Contracts;
+#endif
 using SourceName.Infrastructure.Persistence;
 using SourceName.Infrastructure.Persistence.PostgreSql;
+#if IncludeExample
+using SourceName.Infrastructure.Persistence.ToDos;
+#endif
 
 namespace SourceName.Infrastructure.Loaders;
 

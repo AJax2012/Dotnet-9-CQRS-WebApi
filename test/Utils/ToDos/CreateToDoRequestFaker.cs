@@ -1,6 +1,6 @@
 using SourceName.Api.ToDos.Create;
 
-namespace SourceName.TestUtils.Fakers.ToDos;
+namespace SourceName.TestUtils.ToDos;
 
 public static class CreateToDoRequestFaker
 {

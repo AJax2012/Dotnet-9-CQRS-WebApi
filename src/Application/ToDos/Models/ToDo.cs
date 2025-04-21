@@ -12,5 +12,5 @@ public record ToDo(
 public static class ToDoExtensions
 {
     public static ToDo MapFromEntity(this ToDoEntity toDo) =>
-        new(toDo.Id, toDo.CreatedByUserId, toDo.Title, toDo.IsCompleted, toDo.DisplayOrder);
+        new(toDo.Id, toDo.CreatedByUserId, toDo.Title.Value, toDo.Status.IsCompleted, toDo.Status.DisplayOrder);
 }

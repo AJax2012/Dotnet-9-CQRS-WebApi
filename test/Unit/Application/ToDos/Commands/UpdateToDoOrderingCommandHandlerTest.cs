@@ -6,7 +6,7 @@ using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Queries;
 using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Commands;
 
@@ -106,7 +106,7 @@ public class UpdateToDoOrderingCommandHandlerTest
     {
         var toDos = ToDoEntityFaker.Generate(5);
         
-        var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.DisplayOrder!.Value);
+        var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
@@ -128,7 +128,7 @@ public class UpdateToDoOrderingCommandHandlerTest
     {
         var toDos = ToDoEntityFaker.Generate(5);
         
-        var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.DisplayOrder!.Value);
+        var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);

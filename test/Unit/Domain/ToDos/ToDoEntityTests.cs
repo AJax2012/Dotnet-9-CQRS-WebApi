@@ -1,5 +1,5 @@
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Domain.ToDos;
 
@@ -12,12 +12,12 @@ public class ToDoEntityTests
         var title = new Faker().Random.Words();
         var order = new Faker().Random.Int();
         
-        var sut = new ToDoEntity(createdByUserId, title, order);
+        var sut = new ToDoEntity(createdByUserId, new(title), order);
         
         Assert.Equal(createdByUserId, sut.CreatedByUserId);
-        Assert.Equal(title, sut.Title);
-        Assert.Equal(order, sut.DisplayOrder);
-        Assert.False(sut.IsCompleted);
+        Assert.Equal(title, sut.Title.Value);
+        Assert.Equal(order, sut.Status.DisplayOrder);
+        Assert.False(sut.Status.IsCompleted);
         Assert.NotEqual(sut.Id, Guid.Empty);
     }
 
@@ -30,19 +30,19 @@ public class ToDoEntityTests
         var createdByUserId = Guid.NewGuid();
         var title = new Faker().Random.Words();
         var isCompleted = new Faker().Random.Bool();
-        var order = includeOrder ? new Faker().Random.Int() : (int?)null;
+        var displayOrder = includeOrder ? new Faker().Random.Int() : (int?)null;
         var createdAt = new Faker().Date.Past();
         var updatedAt = new Faker().Date.Past();
 
-        var sut = new ToDoEntity(id, createdByUserId, title, isCompleted, createdAt, updatedAt, order);
+        var sut = new ToDoEntity(id, createdByUserId, new(title), new ToDoStatus(isCompleted, displayOrder), createdAt, updatedAt);
         
         Assert.Equal(id, sut.Id);
         Assert.Equal(createdByUserId, sut.CreatedByUserId);
-        Assert.Equal(title, sut.Title);
-        Assert.Equal(isCompleted, sut.IsCompleted);
+        Assert.Equal(title, sut.Title.Value);
+        Assert.Equal(isCompleted, sut.Status.IsCompleted);
         Assert.Equal(createdAt, sut.CreatedAt);
         Assert.Equal(updatedAt, sut.UpdatedAt);
-        Assert.Equal(order, sut.DisplayOrder);
+        Assert.Equal(displayOrder, sut.Status.DisplayOrder);
     }
     
     [Fact]
@@ -51,12 +51,12 @@ public class ToDoEntityTests
         var sut = ToDoEntityFaker.Generate().First();
         var originalUpdatedAt = sut.UpdatedAt;
         var title = new Faker().Random.Words();
-        var isCompleted = !sut.IsCompleted;
+        var isCompleted = !sut.Status.IsCompleted;
         
         sut.Update(title, isCompleted);
         
-        Assert.Equal(title, sut.Title);
-        Assert.Equal(isCompleted, sut.IsCompleted);
+        Assert.Equal(title, sut.Title.Value);
+        Assert.Equal(isCompleted, sut.Status.IsCompleted);
         Assert.NotEqual(originalUpdatedAt, sut.UpdatedAt);
     }
     
@@ -64,26 +64,26 @@ public class ToDoEntityTests
     public void Update_SetsOrderToNull_WhenIsCompletedIsTrue()
     {
         var sut = ToDoEntityFaker.Generate().First();
-        sut.Update(sut.Title, true);
-        Assert.Null(sut.DisplayOrder);
+        sut.Update(sut.Title.Value, true);
+        Assert.Null(sut.Status.DisplayOrder);
     }
     
     [Fact]
     public void UpdateOrder_DoesNotSetOrder_WhenIsCompletedIsTrue()
     {
         var sut = ToDoEntityFaker.Generate().First();
-        sut.Update(sut.Title, true);
+        sut.Update(sut.Title.Value, true);
         sut.UpdateOrder(new Faker().Random.Int());
-        Assert.Null(sut.DisplayOrder);
+        Assert.Null(sut.Status.DisplayOrder);
     }
     
     [Fact]
     public void UpdateOrder_OrderIsUpdated_WhenNewOrderProvidedAndIsCompletedIsFalse()
     {
         var sut = ToDoEntityFaker.Generate().First();
-        sut.Update(sut.Title, false);
+        sut.Update(sut.Title.Value, false);
         var order = new Faker().Random.Int();
         sut.UpdateOrder(order);
-        Assert.Equal(order, sut.DisplayOrder);
+        Assert.Equal(order, sut.Status.DisplayOrder);
     }
 }

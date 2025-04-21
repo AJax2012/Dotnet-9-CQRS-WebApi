@@ -38,7 +38,13 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
     {
         var builder = new SqlBuilder();
 
-        GetFilteredWhereClause(filter, builder, cursor);
+        GetFilteredWhereClause(filter, builder);
+
+        if (cursor is not null)
+        {
+            (string orderBy, dynamic nextPageToken) = GetNextEntityClause(filter.OrderBy, cursor);
+            builder.Where(orderBy, nextPageToken);
+        }
         
         var descendingClause = filter.IsDescending ? "DESC" : "ASC"; 
         builder.OrderBy($"@orderBy {descendingClause}", new { orderBy = filter.OrderBy });
@@ -71,7 +77,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
     public async Task<int> GetCountAsync(GetToDosFilteredQuery filter, CancellationToken cancellationToken)
     {
         var builder = new SqlBuilder();
-        GetFilteredWhereClause(filter, builder, null);
+        GetFilteredWhereClause(filter, builder);
 
         var query = builder.AddTemplate("""
                             SELECT COUNT(*) FROM todos
@@ -90,7 +96,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                              """;
         
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        return await connection.ExecuteAsync(new(query, toDo, cancellationToken: cancellationToken));
+        return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
     }
     
     public async Task<int> UpdateAsync(ToDoEntity toDo, CancellationToken cancellationToken)
@@ -105,12 +111,12 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                              """;
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        return await connection.ExecuteAsync(new(query, toDo, cancellationToken: cancellationToken));
+        return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
     }
     
     public async Task<int> UpdateOrderAsync(IReadOnlyList<ToDoEntity> toDos, CancellationToken cancellationToken)
     {
-        var values = toDos.Select(toDo => $"('{toDo.Id}', {toDo.DisplayOrder})").ToList();
+        var values = toDos.Select(toDo => $"('{toDo.Id}', {toDo.Status.DisplayOrder})").ToList();
 
         var sql = $"""
                    WITH cte as (
@@ -135,7 +141,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         return await connection.ExecuteAsync(new(query, new { id }, cancellationToken: cancellationToken));
     }
     
-    private static void GetFilteredWhereClause(GetToDosFilteredQuery filter, SqlBuilder builder, ToDoEntity? cursor)
+    private static void GetFilteredWhereClause(GetToDosFilteredQuery filter, SqlBuilder builder)
     {
         if (filter.IsCompleted.HasValue)
         {
@@ -151,19 +157,13 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         {
             builder.Where("id = ANY(@ids)", new { ids = filter.Ids });
         }
-
-        if (cursor is not null)
-        {
-            (string orderBy, dynamic nextPageToken) = GetOrderByClause(filter.OrderBy, cursor);
-            builder.Where(orderBy, nextPageToken);
-        }
     }
     
-    private static (string orderBy, dynamic nextPageToken) GetOrderByClause(string orderBy, ToDoEntity cursor) =>
+    private static (string orderBy, dynamic nextPageToken) GetNextEntityClause(string orderBy, ToDoEntity cursor) =>
         orderBy switch
         {
-            "DisplayOrder" => ("display_order > @nextPageToken", new { nextPageToken = cursor.DisplayOrder! }),
-            "Title" => ("title > @nextPageToken", new { nextPageToken = cursor.Title }),
+            "DisplayOrder" => ("display_order > @nextPageToken", new { nextPageToken = cursor.Status.DisplayOrder }),
+            "Title" => ("title > @nextPageToken", new { nextPageToken = cursor.Title.Value }),
             "CreatedAt" => ("created_at > @nextPageToken", new { nextPageToken = cursor.CreatedAt }),
             _ => throw new ArgumentOutOfRangeException(nameof(orderBy), orderBy, null)
         };

@@ -20,14 +20,18 @@ internal static class ToDoRequestExamples
     internal static readonly DeleteToDoRequest DeleteToDoRequest = new() { Id = ExampleId };
     internal static readonly GetToDoByIdRequest GetToDoByIdRequest = new() { Id = ExampleId };
 
-    internal static readonly GetToDosFilteredRequest GetToDosFilteredRequestWithAllProperties = new(
-        ToDosOrderBy.DisplayOrder.ToStringFast(),
-        25,
-        true,
-        NextPageToken,
-        Title,
-        false);
+    internal static readonly GetToDosFilteredRequest GetToDosFilteredRequestWithAllProperties = new()
+    {
+        OrderBy = ToDosOrderBy.DisplayOrder.ToStringFast(),
+        Limit = 25,
+        IsDescending = true,
+        NextPageToken = NextPageToken,
+        Title = Title,
+        IsCompleted = false
+    };
 
-    internal static readonly GetToDosFilteredRequest GetToDosFilteredRequestWithoutNullableProperties =
-        new(ToDosOrderBy.DisplayOrder.ToStringFast());
+    internal static readonly GetToDosFilteredRequest GetToDosFilteredRequestWithoutNullableProperties = new()
+    {
+        OrderBy = ToDosOrderBy.DisplayOrder.ToStringFast(),
+    };
 }

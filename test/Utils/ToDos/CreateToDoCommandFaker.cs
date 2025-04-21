@@ -1,6 +1,6 @@
 using SourceName.Application.ToDos.Commands;
 
-namespace SourceName.TestUtils.Fakers.ToDos;
+namespace SourceName.TestUtils.ToDos;
 
 public static class CreateToDoCommandFaker
 {

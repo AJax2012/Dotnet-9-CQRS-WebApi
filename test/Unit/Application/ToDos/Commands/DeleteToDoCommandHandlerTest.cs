@@ -3,7 +3,7 @@ using Serilog;
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Domain.ToDos;
-using SourceName.TestUtils.Fakers.ToDos;
+using SourceName.TestUtils.ToDos;
 
 namespace SourceName.Test.Application.ToDos.Commands;
 

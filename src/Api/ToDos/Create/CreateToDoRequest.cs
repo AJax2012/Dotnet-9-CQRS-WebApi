@@ -10,7 +10,7 @@ namespace SourceName.Api.ToDos.Create;
 public class CreateToDoRequest
 {
     /// <summary>
-    /// To do title
+    /// To do toDoTitle
     /// </summary>
     public string? Title { get; init; }
 
