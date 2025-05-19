@@ -1,5 +1,4 @@
 using System.Diagnostics;
-
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace SourceName.AppHost;
@@ -32,9 +31,13 @@ internal static class DocumentationExtensions
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 return Task.FromResult(new ExecuteCommandResult { Success = true });
             },
-            updateState: context => context.ResourceSnapshot.HealthStatus == HealthStatus.Healthy ? 
-                ResourceCommandState.Enabled : 
-                ResourceCommandState.Disabled,
-            iconName: "Document");
+            new()
+            {
+                IconName = "Document",
+                UpdateState = context =>
+                    context.ResourceSnapshot.HealthStatus == HealthStatus.Healthy ? 
+                        ResourceCommandState.Enabled : 
+                        ResourceCommandState.Disabled
+            });
     }
 }
