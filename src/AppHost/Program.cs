@@ -21,7 +21,6 @@ builder.AddProject<Projects.SourceName_Api>("api")
     .WaitFor(postgresDatabase)
     .WaitForCompletion(migrator)
     .WithEnvironment("ConnectionStrings:Default", postgresDatabase.Resource.ConnectionStringExpression)
-    .WithScalarUiDocs()
-    .WithSwaggerUiDocs();
+    .WithScalarUiDocs();
 
 builder.Build().Run();

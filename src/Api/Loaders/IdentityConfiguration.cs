@@ -1,9 +1,7 @@
 using System.Text;
 
 using FastEndpoints.Security;
-
 using Microsoft.IdentityModel.Tokens;
-
 using SourceName.Api.Loaders.Models;
 
 using ILogger = Serilog.ILogger;
@@ -16,8 +14,8 @@ internal static class IdentityConfiguration
         this WebApplicationBuilder app,
         ILogger logger)
     {
-        var jwtSettings = app.Configuration.GetJwtBearerTokenSettings();
-        var isDevelopment = app.Environment.IsDevelopment();
+        var jwtSettings = JwtBearerTokenSettings.GetJwtBearerTokenSettings(app.Configuration);
+        
         app.Services.AddAuthenticationJwtBearer(
             signingOptions => signingOptions.SigningKey = jwtSettings.SigningKey,
             bearerOptions =>
@@ -51,20 +49,5 @@ internal static class IdentityConfiguration
         
         app.Services.AddAuthorization();
         return app;
-    }
-    
-    private static JwtBearerTokenSettings GetJwtBearerTokenSettings(this IConfiguration configuration)
-    {
-        var jwtSettings = new JwtBearerTokenSettings();
-        
-        configuration.GetRequiredSection(JwtBearerTokenSettings.Key)
-            .Bind(jwtSettings);
-        
-        ArgumentException.ThrowIfNullOrWhiteSpace(jwtSettings.Audience);
-        ArgumentException.ThrowIfNullOrWhiteSpace(jwtSettings.Issuer);
-        ArgumentException.ThrowIfNullOrWhiteSpace(jwtSettings.SigningKey);
-        ArgumentNullException.ThrowIfNull(jwtSettings.ExpiryTimeInSeconds);
-        
-        return jwtSettings;
     }
 }
