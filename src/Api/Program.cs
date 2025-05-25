@@ -1,5 +1,7 @@
 using FastEndpoints;
 
+using Serilog;
+
 using SourceName.Api.Loaders;
 using SourceName.Application.Loaders;
 using SourceName.Infrastructure.Loaders;
@@ -31,7 +33,8 @@ app.UseExceptionHandler()
     .UseHttpsRedirection()
     .UseCorsConfiguration(isDevelopment)
     .UseAuthorization()
-    .UseAuthentication();
+    .UseAuthentication()
+    .UseSerilogRequestLogging();
 
 app.MapDefaultEndpoints();
 app.MapFastEndpoints();
