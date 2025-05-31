@@ -7,12 +7,9 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src\Api\SourceName.Api.csproj" Type="C#" />
-    <Project Path="src\AppHost\SourceName.AppHost.csproj" Type="C#" />
     <Project Path="src\Application\SourceName.Application.csproj" Type="C#" />
     <Project Path="src\Domain\SourceName.Domain.csproj" Type="C#" />
     <Project Path="src\Infrastructure\SourceName.Infrastructure.csproj" Type="C#" />
-    <Project Path="src\Migrator\SourceName.Migrator.csproj" Type="C#" />
-    <Project Path="src\ServiceDefaults\SourceName.ServiceDefaults.csproj" Type="C#" />
     <File Path="src\Directory.Build.props" />
   </Folder>
   <Folder Name="/test/">
@@ -29,5 +26,11 @@
   </Folder>
   <Folder Name="/test/Utils/">
     <Project Path="test\Utils\SourceName.TestUtils.csproj" Type="C#" />
+  </Folder>
+  <Folder Name="/infra/">
+    <Project Path="infra\AppHost\SourceName.AppHost.csproj" Type="C#" />
+    <Project Path="infra\Migrator\SourceName.Migrator.csproj" Type="C#" />
+    <Project Path="infra\ServiceDefaults\SourceName.ServiceDefaults.csproj" Type="C#" />
+    <File Path="infra\Directory.Build.props" />
   </Folder>
 </Solution>

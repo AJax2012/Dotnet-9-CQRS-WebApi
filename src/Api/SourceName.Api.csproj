@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Application\SourceName.Application.csproj" />
     <ProjectReference Include="..\Infrastructure\SourceName.Infrastructure.csproj" />
-    <ProjectReference Include="..\ServiceDefaults\SourceName.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\infra\ServiceDefaults\SourceName.ServiceDefaults.csproj" />
   </ItemGroup>
   
 </Project>

@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Api\SourceName.Api.csproj" />
-    <ProjectReference Include="..\..\src\Migrator\SourceName.Migrator.csproj" />
+    <ProjectReference Include="..\..\infra\Migrator\SourceName.Migrator.csproj" />
     <ProjectReference Include="..\Utils\SourceName.TestUtils.csproj" />
   </ItemGroup>
 

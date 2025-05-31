@@ -15,7 +15,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Api\SourceName.Api.csproj" />
+    <ProjectReference Include="..\..\src\Api\SourceName.Api.csproj" />
     <ProjectReference Include="..\Migrator\SourceName.Migrator.csproj" />
   </ItemGroup>
 
