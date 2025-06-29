@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-using SourceName.Api.Extensions;
+using SourceName.Api.ErrorHandling;
 using SourceName.Api.ToDos.ExampleResponses;
 using SourceName.Api.ToDos.GetById;
 using SourceName.Application.ToDos.Commands;

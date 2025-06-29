@@ -3,7 +3,7 @@ using System.Text.Json;
 using ErrorOr;
 using FluentValidation.Results;
 
-namespace SourceName.Api.Extensions;
+namespace SourceName.Api.ErrorHandling;
 
 internal static class ProblemDetailsFactory
 {
