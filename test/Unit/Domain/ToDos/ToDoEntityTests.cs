@@ -22,14 +22,15 @@ public class ToDoEntityTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Constructor_PropertiesAreSet_WhenAllParametersProvided(bool includeOrder)
+    [InlineData(true, true)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(false, false)]
+    public void Constructor_PropertiesAreSet_WhenAllParametersProvided(bool includeOrder, bool isCompleted)
     {
         var id = Guid.NewGuid();
         var createdByUserId = Guid.NewGuid();
         var title = new Faker().Random.Words();
-        var isCompleted = new Faker().Random.Bool();
         var displayOrder = includeOrder ? new Faker().Random.Int() : (int?)null;
         var createdAt = new Faker().Date.Past();
         var updatedAt = new Faker().Date.Past();
@@ -42,7 +43,7 @@ public class ToDoEntityTests
         Assert.Equal(isCompleted, sut.Status.IsCompleted);
         Assert.Equal(createdAt, sut.CreatedAt);
         Assert.Equal(updatedAt, sut.UpdatedAt);
-        Assert.Equal(displayOrder, sut.Status.DisplayOrder);
+        Assert.Equal(isCompleted ? null : displayOrder, sut.Status.DisplayOrder);
     }
     
     [Fact]
