@@ -1,5 +1,4 @@
 using FastEndpoints;
-
 using Serilog;
 
 using SourceName.Api.Loaders;
@@ -13,10 +12,7 @@ builder.AddIdentityConfiguration(logger)
     .AddServiceDefaults();
 
 builder.Services
-    .AddProblemDetails()
-    .AddCorsConfiguration(builder.Configuration)
-    .AddFastEndpoints()
-    .AddOpenApiDocuments()
+    .AddApiModule(builder.Configuration)
     .AddApplicationModule()
     .AddInfrastructureModule(builder.Configuration);
 
@@ -34,6 +30,7 @@ app.UseExceptionHandler()
     .UseCorsConfiguration(isDevelopment)
     .UseAuthorization()
     .UseAuthentication()
+    .UseExceptionHandler()
     .UseSerilogRequestLogging();
 
 app.MapDefaultEndpoints();
