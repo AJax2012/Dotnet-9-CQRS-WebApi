@@ -2,16 +2,21 @@
   Status: 400 Bad Request,
   Content: {
     Headers: {
-      Content-Type: application/problem+json; charset=utf-8
+      Content-Type: application/problem+json
     },
     Value: {
-      statusCode: 400,
-      message: One or more errors occurred!,
-      errors: {
-        id: [
-          'id' must not be empty.
-        ]
-      }
+      type: https://tools.ietf.org/html/rfc9110#name-400-bad-request,
+      title: Invalid Request,
+      status: 400,
+      detail: The request was invalid,
+      errors: [
+        {
+          field: id,
+          errors: [
+            'id' must not be empty.
+          ]
+        }
+      ]
     }
   }
 }

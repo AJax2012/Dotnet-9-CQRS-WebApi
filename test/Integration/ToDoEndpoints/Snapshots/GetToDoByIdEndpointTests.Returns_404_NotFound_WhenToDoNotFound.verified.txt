@@ -2,8 +2,13 @@
   Status: 404 Not Found,
   Content: {
     Headers: {
-      Content-Type: application/json; charset=utf-8
+      Content-Type: application/problem+json
     },
-    Value: ToDo not found.
+    Value: {
+      type: https://tools.ietf.org/html/rfc9110#name-404-not-found,
+      title: ToDo.NotFound,
+      status: 404,
+      detail: ToDo not found.
+    }
   }
 }

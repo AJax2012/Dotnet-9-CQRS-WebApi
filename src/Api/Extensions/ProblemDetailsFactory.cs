@@ -1,5 +1,6 @@
+using System.Text.Json;
+
 using ErrorOr;
-using FastEndpoints;
 using FluentValidation.Results;
 
 namespace SourceName.Api.Extensions;
@@ -9,36 +10,93 @@ internal static class ProblemDetailsFactory
     /// <summary>
     /// Creates a Problem Details result from a list of <see cref="Error"/>
     /// </summary>
-    /// <param name="errors"><see cref="Error"/></param>
+    /// <param name="errors">List of <see cref="Error"/></param>
     /// <returns><see cref="IResult"/></returns>
-    internal static IResult ToProblemDetailsResult(this IReadOnlyList<Error> errors)
+    /// <exception cref="InvalidOperationException" />
+    internal static IResult ToProblemDetailsResult(this List<Error> errors)
     {
-        if (errors.Count is 0)
+        if (errors.Count == 0)
         {
-            return TypedResults.NoContent();
+            throw new InvalidOperationException("No errors were found.");
         }
-
-        return errors.All(error => error.Type == ErrorType.Validation) ?
-            ValidationProblem(errors) : Problem(errors[0]);
+        
+        var firstError = errors[0];
+        
+        return Results.Problem(
+            title: firstError.Code,
+            detail: firstError.Description,
+            type: GetType(firstError),
+            statusCode: GetStatusCode(firstError),
+            extensions: GetErrors(errors)
+        );
     }
 
-    private static IResult Problem(Error error) =>
+    /// <summary>
+    /// Creates a Problem Details result from a list of <see cref="ValidationFailure"/>
+    /// </summary>
+    /// <param name="errors">List of <see cref="ValidationFailure"/></param>
+    /// <returns><see cref="IResult"/></returns>
+    /// <exception cref="InvalidOperationException" />
+    internal static IResult ToProblemDetailsResult(this List<ValidationFailure> errors)
+    {
+        if (errors.Count == 0)
+        {
+            throw new InvalidOperationException("No validation errors were found.");
+        }
+        
+        return Results.Problem(
+            title: "Invalid Request",
+            detail: "The request was invalid",
+            type: "https://tools.ietf.org/html/rfc9110#name-400-bad-request",
+            statusCode: StatusCodes.Status400BadRequest,
+            extensions: GetErrors(errors)
+        );
+    }
+
+    static string GetType(Error error) =>
         error.Type switch
         {
-            ErrorType.Conflict => TypedResults.Conflict(error.Description),
-            ErrorType.Validation => ValidationProblem(new[] { error }),
-            ErrorType.NotFound => TypedResults.NotFound(error.Description),
-            ErrorType.Unexpected => TypedResults.InternalServerError(error.Description),
-            _ => TypedResults.Problem(error.Description)
+            ErrorType.Conflict => "https://tools.ietf.org/html/rfc9110#name-409-conflict",
+            ErrorType.NotFound => "https://tools.ietf.org/html/rfc9110#name-404-not-found",
+            ErrorType.Validation => "https://tools.ietf.org/html/rfc9110#name-400-bad-request",
+            _ => "https://tools.ietf.org/html/rfc9110#name-500-internal-server-error"
         };
 
-    private static ProblemDetails ValidationProblem(IReadOnlyList<Error> errors)
-    {
-        var validationErrors = errors
-            .Select(error => new ValidationFailure(error.Code, error.Description))
-            .ToList()
-            .AsReadOnly();
+    static int GetStatusCode(Error error) =>
+        error.Type switch
+        {
+            ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.NotFound => StatusCodes.Status404NotFound,
+            ErrorType.Validation => StatusCodes.Status400BadRequest,
+            _ => StatusCodes.Status500InternalServerError
+        };
 
-        return new ProblemDetails(validationErrors);
+    private static Dictionary<string, object?>? GetErrors(List<Error> errors)
+    {
+        if (errors[0].Type != ErrorType.Validation)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            { "errors", errors.ToDictionary(x => x.Code, x => x.Description) }
+        };
+    }
+
+    private static Dictionary<string, object?>? GetErrors(List<ValidationFailure> errors)
+    {
+        return new()
+        {
+            {
+                "errors",
+                errors.GroupBy(x => x.PropertyName)
+                    .Select(group => new
+                    {
+                        Field = group.Key,
+                        Errors = group.Select(error => error.ErrorMessage)
+                    })
+            }
+        };
     }
 }

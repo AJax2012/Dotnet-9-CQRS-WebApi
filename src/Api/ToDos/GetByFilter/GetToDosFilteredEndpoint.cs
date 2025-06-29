@@ -41,7 +41,7 @@ internal class GetToDosFilteredEndpoint : Endpoint<GetToDosFilteredRequest, ToDo
     {
         if (ValidationFailed)
         {
-            await SendErrorsAsync(StatusCodes.Status400BadRequest, ct);
+            await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
         

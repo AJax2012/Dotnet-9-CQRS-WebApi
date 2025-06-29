@@ -37,7 +37,7 @@ internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoRespon
     {
         if (ValidationFailed)
         {
-            await SendErrorsAsync(StatusCodes.Status400BadRequest, ct);
+            await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
 

@@ -16,6 +16,7 @@ public static class VerifyGlobalSettings
         var settings = new VerifySettings();
         settings.UseDirectory("Snapshots");
         settings.ScrubInlineGuids();
+        settings.IgnoreMember("traceId");
         return settings;
     }
 }

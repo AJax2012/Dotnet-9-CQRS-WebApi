@@ -35,7 +35,7 @@ internal class UpdateToDoOrderingEndpoint : Endpoint<UpdateToDoOrderingRequest>
     {
         if (ValidationFailed)
         {
-            await SendErrorsAsync(StatusCodes.Status400BadRequest, cancellationToken);
+            await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
         
