@@ -11,7 +11,7 @@ internal static class LoggingConfiguration
         
         ILogger logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
-            .CreateLogger();
+            .CreateBootstrapLogger();
 
         builder.Host.UseSerilog(logger);
         return logger;
