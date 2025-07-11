@@ -7,6 +7,7 @@ Dotnet new template for Dotnet 9 CQRS WebApi with the following features:
   * PostgreSQL database created on startup
   * Runs migrations on startup using FluentMigrator
   * Has Scalar UI Doc links in the Dashboard
+  * Seq Dashboard
 * FastEndpoints
   * REPR pattern endpoints
   * Commands and Queries
