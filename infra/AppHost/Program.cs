@@ -11,6 +11,10 @@ var postgres = builder.AddPostgres("postgres")
     
 var postgresDatabase = postgres.AddDatabase(pgName);
 
+var seq = builder.AddSeq("seq")
+    .WithEnvironment("ACCEPT_EULA", "Y")
+    .WithLifetime(ContainerLifetime.Persistent);
+
 var migrator = builder.AddProject<Projects.SourceName_Migrator>("migrator")
     .WithReference(postgresDatabase)
     .WaitFor(postgresDatabase)
@@ -19,8 +23,11 @@ var migrator = builder.AddProject<Projects.SourceName_Migrator>("migrator")
 builder.AddProject<Projects.SourceName_Api>("api")
     .WithReference(postgresDatabase)
     .WaitFor(postgresDatabase)
+    .WithReference(seq)
+    .WaitFor(seq)
     .WaitForCompletion(migrator)
     .WithEnvironment("ConnectionStrings:Default", postgresDatabase.Resource.ConnectionStringExpression)
+    .WithEnvironment("Serilog:WriteTo:Seq:Args:ServerUrl", seq.Resource.ConnectionStringExpression)
     .WithScalarUiDocs();
 
 builder.Build().Run();
