@@ -22,18 +22,6 @@ internal sealed class GlobalExceptionHandler(ILogger logger, IWebHostEnvironment
                 { "traceId", httpContext.TraceIdentifier }
             }
         };
-
-        if (environment.IsDevelopment())
-        {
-            problemDetails.Extensions.Add("exception", exception.Message);
-            problemDetails.Extensions.Add("stackTrace", exception.StackTrace);
-
-            if (exception.InnerException != null)
-            {
-                problemDetails.Extensions.Add("innerException", exception.InnerException.Message);
-                problemDetails.Extensions.Add("innerStackTrace", exception.InnerException.StackTrace);
-            }
-        }
         
         httpContext.Response.StatusCode = problemDetails.Status.Value;
         httpContext.Response.ContentType = "application/problem+json";
