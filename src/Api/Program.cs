@@ -30,7 +30,6 @@ app.UseExceptionHandler()
     .UseCorsConfiguration(isDevelopment)
     .UseAuthorization()
     .UseAuthentication()
-    .UseExceptionHandler()
     .UseSerilogRequestLogging();
 
 app.MapDefaultEndpoints();
