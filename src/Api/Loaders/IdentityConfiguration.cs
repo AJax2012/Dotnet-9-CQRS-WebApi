@@ -1,9 +1,8 @@
 using System.Text;
-
 using FastEndpoints.Security;
 using Microsoft.IdentityModel.Tokens;
+using SourceName.Api.Loaders.Events;
 using SourceName.Api.Loaders.Models;
-
 using ILogger = Serilog.ILogger;
 
 namespace SourceName.Api.Loaders;
@@ -27,24 +26,7 @@ internal static class IdentityConfiguration
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey)),
                 };
                 
-                bearerOptions.Events = new()
-                {
-                    OnAuthenticationFailed = context =>
-                    {
-                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                        {
-                            context.Response.Headers.Append("Token-Expired", "true");
-                        }
-                        else
-                        {
-                            logger.Error("JWT Token Error: {Message}", context.Exception.Message);
-                            context.Response.Headers.Append("Token-Error", "invalid token");
-                        }
-
-                        return Task.CompletedTask;
-                    },
-                    OnTokenValidated = _ => Task.CompletedTask,
-                };
+                bearerOptions.Events = new ApplicationJwtBearerEvents(logger);
             });
         
         app.Services.AddAuthorization();
