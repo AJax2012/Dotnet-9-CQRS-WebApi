@@ -11,7 +11,7 @@ internal sealed class GlobalExceptionHandler(ILogger logger) : IExceptionHandler
     
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.Error(exception, "Unhandled exception occured");
+        _logger.Error(exception, "An unhandled exception occured");
         
         var problemDetails = new ProblemDetails
         {
