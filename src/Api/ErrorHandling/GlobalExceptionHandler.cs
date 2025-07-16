@@ -5,7 +5,7 @@ using ILogger = Serilog.ILogger;
 
 namespace SourceName.Api.ErrorHandling;
 
-internal sealed class GlobalExceptionHandler(ILogger logger, IWebHostEnvironment environment) : IExceptionHandler
+internal sealed class GlobalExceptionHandler(ILogger logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
