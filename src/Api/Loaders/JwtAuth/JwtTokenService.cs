@@ -13,7 +13,7 @@ namespace SourceName.Api.Loaders.JwtAuth;
 /// <param name="options"></param>
 public class JwtTokenService(IOptions<BearerAuthorizationScheme> options)
 {
-    private readonly IOptions<BearerAuthorizationScheme> _options = options;
+    private readonly BearerAuthorizationScheme _scheme = options.Value;
 
     /// <summary>
     /// Generates a JWT token, primarily for testing purposes.
@@ -44,17 +44,17 @@ public class JwtTokenService(IOptions<BearerAuthorizationScheme> options)
         new()
         {
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _options.Value.ValidIssuer,
-            ValidAudience = _options.Value.ValidAudiences.First(),
+            ValidIssuer = _scheme.ValidIssuer,
+            ValidAudience = _scheme.ValidAudiences.First(),
             IssuerSigningKey = GetSecurityKey(),
             TryAllIssuerSigningKeys = true
         };
     
-    internal string GetSigningKey() => _options.Value.SigningKeys.First().Value;
+    internal string GetSigningKey() => _scheme.SigningKeys.First().Value;
 
     private SymmetricSecurityKey GetSecurityKey()
     {
-        var signingKey = _options.Value.SigningKeys.FirstOrDefault();
+        var signingKey = _scheme.SigningKeys.FirstOrDefault();
         ArgumentNullException.ThrowIfNull(signingKey);
         
         return new(Encoding.UTF8.GetBytes(signingKey.Value))
