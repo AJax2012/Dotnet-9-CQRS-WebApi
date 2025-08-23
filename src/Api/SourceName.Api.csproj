@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>462c1bf5-a984-47de-ae2d-d8e2d7d13a82</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

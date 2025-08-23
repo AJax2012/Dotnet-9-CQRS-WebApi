@@ -16,17 +16,21 @@ public class UpdateToDoOrderingEndpointTests : IClassFixture<ApplicationApiFacto
     public UpdateToDoOrderingEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + MockTokenGenerator.GenerateJwtToken());
+        
+        var jwtToken = factory.JwtTokenService
+            .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
+        
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
     
     [Fact]
     public async Task Returns_204_NoContent_WhenToDoOrderingUpdated()
     {
         var createRequests = CreateToDoRequestFaker.Faker.Generate(2);
-        var createdResponse1 = await _client.PostAsJsonAsync("/todos", createRequests[0]);
+        var createdResponse1 = await _client.PostAsJsonAsync("/api/todos", createRequests[0]);
         var createdContent1 = await createdResponse1.Content.ReadFromJsonAsync<CreateToDoResponse>();
         
-        var createdResponse2 = await _client.PostAsJsonAsync("/todos", createRequests[1]);
+        var createdResponse2 = await _client.PostAsJsonAsync("/api/todos", createRequests[1]);
         var createdContent2 = await createdResponse2.Content.ReadFromJsonAsync<CreateToDoResponse>();
 
         var updateToDoOrderingRequest = new UpdateToDoOrderingRequest
@@ -38,7 +42,7 @@ public class UpdateToDoOrderingEndpointTests : IClassFixture<ApplicationApiFacto
             }
         };
         
-        var actual = await _client.PutAsJsonAsync("/todos/order", updateToDoOrderingRequest);
+        var actual = await _client.PutAsJsonAsync("/api/todos/order", updateToDoOrderingRequest);
         
         await Verify(actual, _verifySettings);
     }
@@ -51,7 +55,7 @@ public class UpdateToDoOrderingEndpointTests : IClassFixture<ApplicationApiFacto
             ToDos = []
         };
         
-        var actual = await _client.PutAsJsonAsync("/todos/order", updateToDoOrderingRequest);
+        var actual = await _client.PutAsJsonAsync("/api/todos/order", updateToDoOrderingRequest);
         
         await Verify(actual, _verifySettings);
     }
@@ -67,7 +71,7 @@ public class UpdateToDoOrderingEndpointTests : IClassFixture<ApplicationApiFacto
             }
         };
         
-        var actual = await _client.PutAsJsonAsync("/todos/order", updateToDoOrderingRequest);
+        var actual = await _client.PutAsJsonAsync("/api/todos/order", updateToDoOrderingRequest);
         
         await Verify(actual, _verifySettings);
     }

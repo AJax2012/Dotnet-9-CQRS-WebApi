@@ -1,6 +1,4 @@
-using System.Diagnostics;
-
-using DotNet.Testcontainers.Builders;
+using System.Text;
 
 using FluentMigrator.Runner;
 
@@ -10,14 +8,14 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-
-using NSubstitute;
+using Microsoft.IdentityModel.Tokens;
 
 using SourceName.Api;
+using SourceName.Api.Loaders.JwtAuth;
 using SourceName.Infrastructure.Persistence;
 using SourceName.Infrastructure.Persistence.PostgreSql;
-using SourceName.Migrator;
 using SourceName.Migrator.Migrations;
+using SourceName.Test.Integration.Auth;
 
 using Testcontainers.PostgreSql;
 
@@ -29,7 +27,9 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
         new PostgreSqlBuilder()
             .WithDatabase("SourceName")
             .Build();
-        
+    
+    internal JwtTokenService JwtTokenService => Services.GetRequiredService<JwtTokenService>();
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureLogging(logging =>
@@ -56,7 +56,6 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
     {
         await _pgContainer.StartAsync();
 
-        var connectionString = _pgContainer.GetConnectionString();
         // Run migrations
         using var scope = Services.CreateScope();
         var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();

@@ -1,35 +1,41 @@
-using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FastEndpoints.Security;
-using Microsoft.IdentityModel.Tokens;
-using SourceName.Api.Loaders.Events;
-using SourceName.Api.Loaders.Models;
-using ILogger = Serilog.ILogger;
+using SourceName.Api.Loaders.JwtAuth;
 
 namespace SourceName.Api.Loaders;
 
 internal static class IdentityConfiguration
 {
-    internal static WebApplicationBuilder AddIdentityConfiguration(
-        this WebApplicationBuilder app,
-        ILogger logger)
+    internal static IServiceCollection AddIdentityConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var jwtSettings = JwtBearerTokenSettings.GetJwtBearerTokenSettings(app.Configuration);
+        services
+            .AddOptions<BearerAuthorizationScheme>()
+            .Bind(configuration.GetSection(BearerAuthorizationScheme.Key))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         
-        app.Services.AddAuthenticationJwtBearer(
-            signingOptions => signingOptions.SigningKey = jwtSettings.SigningKey,
-            bearerOptions =>
+        services.AddSingleton<JwtTokenService>();
+        services.AddTransient<ApplicationJwtBearerEvents>();
+        services.AddFastEndpointsAuthentication();
+        services.AddAuthorization();
+        
+        return services;
+    }
+
+    private static void AddFastEndpointsAuthentication(this IServiceCollection services)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var tokenService = serviceProvider.GetRequiredService<JwtTokenService>();
+        
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+        services.AddAuthenticationJwtBearer(
+            s => s.SigningKey = tokenService.GetSigningKey(),
+            b =>
             {
-                bearerOptions.TokenValidationParameters = new()
-                {
-                    ValidAudience = jwtSettings.Audience,
-                    ValidIssuer = jwtSettings.Issuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SigningKey)),
-                };
-                
-                bearerOptions.Events = new ApplicationJwtBearerEvents(logger);
+                b.TokenValidationParameters = tokenService.GetTokenValidationParameters();
+                b.Events = serviceProvider.GetRequiredService<ApplicationJwtBearerEvents>();
             });
-        
-        app.Services.AddAuthorization();
-        return app;
     }
 }

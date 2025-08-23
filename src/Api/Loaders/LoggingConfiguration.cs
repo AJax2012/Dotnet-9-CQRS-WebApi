@@ -5,7 +5,7 @@ namespace SourceName.Api.Loaders;
 
 internal static class LoggingConfiguration
 {
-    internal static ILogger AddLogging(this WebApplicationBuilder builder)
+    internal static WebApplicationBuilder AddLogging(this WebApplicationBuilder builder)
     {
         builder.Logging.ClearProviders();
         
@@ -14,6 +14,6 @@ internal static class LoggingConfiguration
             .CreateBootstrapLogger();
 
         builder.Host.UseSerilog(logger);
-        return logger;
+        return builder;
     }
 }

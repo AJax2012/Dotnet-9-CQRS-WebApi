@@ -7,8 +7,8 @@ using SourceName.Infrastructure.Loaders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var logger = builder.AddLogging();
-builder.AddIdentityConfiguration(logger)
+builder
+    .AddLogging()
     .AddServiceDefaults();
 
 builder.Services
@@ -22,17 +22,9 @@ var isDevelopment = app.Environment.IsDevelopment();
 // Configure the HTTP request pipeline.
 if (isDevelopment)
 {
-    app.UseOpenApiUi();
+    app.UseScalar();
 }
 
-app.UseExceptionHandler()
-    .UseHttpsRedirection()
-    .UseCorsConfiguration(isDevelopment)
-    .UseAuthorization()
-    .UseAuthentication()
-    .UseSerilogRequestLogging();
-
-app.MapDefaultEndpoints();
-app.MapFastEndpoints();
+app.UseApiModule(isDevelopment);
 
 app.Run();

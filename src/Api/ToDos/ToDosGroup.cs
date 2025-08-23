@@ -9,8 +9,6 @@ internal sealed class ToDosGroup : Group
         Configure("todos", ep =>
         {
             ep.Description(x => x.WithTags("To Dos"));
-            ep.AllowAnonymous();
-            ep.DontThrowIfValidationFails();
         });
     }
 }

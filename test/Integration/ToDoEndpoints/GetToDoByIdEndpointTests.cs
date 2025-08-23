@@ -14,16 +14,20 @@ public class GetToDoByIdEndpointTests : IClassFixture<ApplicationApiFactory>
     public GetToDoByIdEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + MockTokenGenerator.GenerateJwtToken());
+        
+        var jwtToken = factory.JwtTokenService
+            .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
+        
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
     
     [Fact]
     public async Task Returns_200_Ok_WhenToDoFoundAndUserIdMatches()
     {
         var createRequest = new CreateToDoRequest { Title = "Test Title" };
-        var createdAtResponse = await _client.PostAsJsonAsync("/todos", createRequest);
+        var createdAtResponse = await _client.PostAsJsonAsync("/api/todos", createRequest);
         var createdAtContent = await createdAtResponse.Content.ReadFromJsonAsync<CreateToDoResponse>();
-        var actual = await _client.GetAsync($"/todos/{createdAtContent!.Id}");
+        var actual = await _client.GetAsync($"/api/todos/{createdAtContent!.Id}");
         
         await Verify(actual, _verifySettings);
     }
@@ -31,14 +35,14 @@ public class GetToDoByIdEndpointTests : IClassFixture<ApplicationApiFactory>
     [Fact]
     public async Task Returns_400_BadRequest_WhenToDoInvalid()
     {
-        var actual = await _client.GetAsync($"/todos/{Guid.Empty}");
+        var actual = await _client.GetAsync($"/api/todos/{Guid.Empty}");
         await Verify(actual, _verifySettings);
     }
     
     [Fact]
     public async Task Returns_404_NotFound_WhenToDoNotFound()
     {
-        var actual = await _client.GetAsync($"/todos/{Guid.NewGuid()}");
+        var actual = await _client.GetAsync($"/api/todos/{Guid.NewGuid()}");
         await Verify(actual, _verifySettings);
     }
 }

@@ -1,11 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+using System.Security.Claims;
 
 using FastEndpoints.Swagger;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
-using SourceName.Api.Loaders.Models;
+using SourceName.Api.Loaders.JwtAuth;
 
 namespace SourceName.Api.Loaders;
 
@@ -23,9 +22,8 @@ internal static class OpenApiConfiguration
             });
     }
 
-    internal static void UseOpenApiUi(this WebApplication app)
+    internal static void UseScalar(this WebApplication app)
     {
-        // Register Scalar UI
         app.UseOpenApi(c => c.Path = "/openapi/scalar/{documentName}.json");
         app.MapScalarApiReference(opts =>
             opts.WithTitle("SourceName API Reference")
@@ -45,25 +43,14 @@ internal static class OpenApiConfiguration
             return null;
         }
 
-        var jwtBearerTokenSettings = JwtBearerTokenSettings.GetJwtBearerTokenSettings(app.Configuration);
-        var key = Encoding.UTF8.GetBytes(jwtBearerTokenSettings.SigningKey);
-        var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature);
+        var jwtBearerConfiguration = app.Services.GetRequiredService<JwtTokenService>();
         
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Expires = DateTime.Now.AddDays(1),
-            SigningCredentials = signingCredentials,
-            Audience = jwtBearerTokenSettings.Audience,
-            Issuer = jwtBearerTokenSettings.Issuer,
-            Claims = new Dictionary<string, object>
-            {
-                {JwtRegisteredClaimNames.Sub, "scalar@gardnerwebtech.com" },
-                {JwtRegisteredClaimNames.NameId, "f080fbab-5ccc-4f79-aa15-c07959e1b1b5" }
-            }
-        };
-
-        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-        var token = jwtSecurityTokenHandler.CreateToken(tokenDescriptor);
-        return jwtSecurityTokenHandler.WriteToken(token);
+        var identity = new ClaimsIdentity(
+        [
+            new(JwtRegisteredClaimNames.Sub, "scalar@gardnerwebtech.com"),
+            new(JwtRegisteredClaimNames.NameId, Guid.NewGuid().ToString())
+        ]);
+        
+        return jwtBearerConfiguration.GenerateJwtToken(identity);
     }
 }

@@ -3,12 +3,14 @@ using Microsoft.IdentityModel.Tokens;
 
 using ILogger = Serilog.ILogger;
 
-namespace SourceName.Api.Loaders.Events;
+namespace SourceName.Api.Loaders.JwtAuth;
 
-internal class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
+/// <inheritdoc />
+public class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
 {
     private readonly ILogger _logger = logger;
-    
+
+    /// <inheritdoc />
     public override Task AuthenticationFailed(AuthenticationFailedContext context)
     {
         if (context.Exception is SecurityTokenExpiredException)

@@ -16,13 +16,17 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     public UpdateToDoEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + MockTokenGenerator.GenerateJwtToken());
+        
+        var jwtToken = factory.JwtTokenService
+            .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
+        
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
     
     [Fact]
     public async Task Returns_204_NoContent_WhenToDoUpdated()
     {
-        var createdResponse = await _client.PostAsJsonAsync("/todos", CreateToDoRequestFaker.Faker.Generate());
+        var createdResponse = await _client.PostAsJsonAsync("/api/todos", CreateToDoRequestFaker.Faker.Generate());
         var createdContent = await createdResponse.Content.ReadFromJsonAsync<CreateToDoResponse>();
 
         var updateRequest = new UpdateToDoRequest
@@ -31,7 +35,7 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
             IsCompleted = false,
         };
         
-        var actual = await _client.PutAsJsonAsync($"/todos/{createdContent!.Id}", updateRequest);
+        var actual = await _client.PutAsJsonAsync($"/api/todos/{createdContent!.Id}", updateRequest);
         
         await Verify(actual, _verifySettings);
     }
@@ -45,7 +49,7 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
             IsCompleted = false,
         };
         
-        var actual = await _client.PutAsJsonAsync($"/todos/{Guid.NewGuid()}", updateRequest);
+        var actual = await _client.PutAsJsonAsync($"/api/todos/{Guid.NewGuid()}", updateRequest);
         
         await Verify(actual, _verifySettings);
     }
@@ -59,7 +63,7 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
             IsCompleted = false,
         };
         
-        var actual = await _client.PutAsJsonAsync($"/todos/{Guid.NewGuid()}", updateRequest);
+        var actual = await _client.PutAsJsonAsync($"/api/todos/{Guid.NewGuid()}", updateRequest);
         
         await Verify(actual, _verifySettings);
     }

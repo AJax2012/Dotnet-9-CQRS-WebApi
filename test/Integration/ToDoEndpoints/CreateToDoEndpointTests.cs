@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-
 using SourceName.Api.ToDos.Create;
 using SourceName.Test.Integration.Auth;
 using SourceName.Test.Integration.VerifyConfig;
@@ -15,20 +14,24 @@ public class CreateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     public CreateToDoEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + MockTokenGenerator.GenerateJwtToken());
+        
+        var jwtToken = factory.JwtTokenService
+            .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
+        
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
 
     [Fact]
     public async Task Returns_201_Created_WhenToDoCreated()
     {
-        var actual = await _client.PostAsJsonAsync("/todos", CreateToDoRequestFaker.Faker.Generate());
+        var actual = await _client.PostAsJsonAsync("/api/todos", CreateToDoRequestFaker.Faker.Generate());
         await Verify(actual, _verifySettings);
     }
     
     [Fact]
     public async Task Returns_400_BadRequest_WhenToDoInvalid()
     {
-        var actual = await _client.PostAsJsonAsync("/todos", new CreateToDoRequest { Title = "" });
+        var actual = await _client.PostAsJsonAsync("/api/todos", new CreateToDoRequest { Title = "" });
         await Verify(actual, _verifySettings);
     }
 
@@ -36,8 +39,8 @@ public class CreateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     public async Task Returns_409_Conflict_WhenToDoAlreadyExists()
     {
         var toDo = CreateToDoRequestFaker.Faker.Generate();
-        await _client.PostAsJsonAsync("/todos", toDo);
-        var actual = await _client.PostAsJsonAsync("/todos", toDo);
+        await _client.PostAsJsonAsync("/api/todos", toDo);
+        var actual = await _client.PostAsJsonAsync("/api/todos", toDo);
         await Verify(actual, _verifySettings);
     }
 }

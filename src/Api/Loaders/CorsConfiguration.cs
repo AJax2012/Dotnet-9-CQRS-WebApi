@@ -7,7 +7,7 @@ internal static class CorsConfiguration
 
     internal static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        var clientOrigin = configuration.GetSection("Auth:ClientOrigin").Value; 
+        var clientOrigin = configuration.GetSection("Authentication:ClientOrigin").Value; 
 
         services.AddCors(options =>
         {

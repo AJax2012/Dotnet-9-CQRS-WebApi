@@ -31,9 +31,13 @@ Dotnet new template for Dotnet 9 CQRS WebApi with the following features:
 5. Run `dotnet new cqrs` with the following parameter options
    * `--name` - The name of the project:
    * `--IncludeExample` - Includes an example ToDos project
-6. Open the project in your favorite IDE
-7. Ensure you are using the Aspire https run configuration 
-(http does not currently work)
+6. `cd ./src/Api` and run `dotnet user-jwts create --claim "nameid={guid}"`.
+   * Helpful tool: I used the [dotnet-guid](https://github.com/sebnilsson/DotnetGuid) tool to generate a GUID in the terminal for the nameid.
+   * Feel free to add more claims or add a name to the JWT as well. All requests require the nameid to be present though.
+   * This creates a user-secrets id and updates the appsettings.Development.json file with data related to your JWT information.
+   * Use the output token to make requests in the provided Scalar GUI or your favorite API testing client.
+7. Open the project in your preferred IDE
+8. Ensure you are using the Aspire https run configuration
 
 If you include the example project, everything should work as expected. 
 You will see the Aspire dashboard open on your browser with the following:

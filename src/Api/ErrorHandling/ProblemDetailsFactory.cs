@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 using ErrorOr;
 using FluentValidation.Results;
 
@@ -37,7 +35,7 @@ internal static class ProblemDetailsFactory
     /// <param name="errors">List of <see cref="ValidationFailure"/></param>
     /// <returns><see cref="IResult"/></returns>
     /// <exception cref="InvalidOperationException" />
-    internal static IResult ToProblemDetailsResult(this List<ValidationFailure> errors)
+    internal static IResult ToProblemDetailsResult(this IReadOnlyCollection<ValidationFailure> errors)
     {
         if (errors.Count == 0)
         {
@@ -71,9 +69,9 @@ internal static class ProblemDetailsFactory
             _ => StatusCodes.Status500InternalServerError
         };
 
-    private static Dictionary<string, object?>? GetErrors(List<Error> errors)
+    private static Dictionary<string, object?>? GetErrors(IReadOnlyCollection<Error> errors)
     {
-        if (errors[0].Type != ErrorType.Validation)
+        if (errors.First().Type != ErrorType.Validation)
         {
             return null;
         }
@@ -84,7 +82,7 @@ internal static class ProblemDetailsFactory
         };
     }
 
-    private static Dictionary<string, object?>? GetErrors(List<ValidationFailure> errors)
+    private static Dictionary<string, object?>? GetErrors(IReadOnlyCollection<ValidationFailure> errors)
     {
         return new()
         {
