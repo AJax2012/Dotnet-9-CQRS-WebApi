@@ -19,7 +19,7 @@ public class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
             return Task.CompletedTask;
         }
         
-        _logger.Error("JWT Token Error: {Message}", context.Exception?.Message);
+        _logger.Error(context.Exception, "JWT Token Error");
         context.Response.Headers.Append("Token-Error", "invalid token");
 
         return Task.CompletedTask;
