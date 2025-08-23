@@ -26,8 +26,9 @@ internal static class IdentityConfiguration
 
     private static void AddFastEndpointsAuthentication(this IServiceCollection services)
     {
-        var serviceProvider = services.BuildServiceProvider();
-        var tokenService = serviceProvider.GetRequiredService<JwtTokenService>();
+        var tokenService = services
+            .BuildServiceProvider()
+            .GetRequiredService<JwtTokenService>();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
         services.AddAuthenticationJwtBearer(
@@ -35,7 +36,7 @@ internal static class IdentityConfiguration
             b =>
             {
                 b.TokenValidationParameters = tokenService.GetTokenValidationParameters();
-                b.Events = serviceProvider.GetRequiredService<ApplicationJwtBearerEvents>();
+                b.EventsType = typeof(ApplicationJwtBearerEvents);
             });
     }
 }
