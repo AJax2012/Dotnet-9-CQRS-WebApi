@@ -1,5 +1,8 @@
 ﻿{
   Status: 200 OK,
+  Headers: {
+    Correlation-Id: {Scrubbed}
+  },
   Content: {
     Headers: {
       Content-Type: application/json; charset=utf-8

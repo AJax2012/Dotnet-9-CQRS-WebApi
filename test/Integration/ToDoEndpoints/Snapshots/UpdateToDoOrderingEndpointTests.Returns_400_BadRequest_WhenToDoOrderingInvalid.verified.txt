@@ -1,5 +1,8 @@
 ﻿{
   Status: 400 Bad Request,
+  Headers: {
+    Correlation-Id: {Scrubbed}
+  },
   Content: {
     Headers: {
       Content-Type: application/problem+json
@@ -16,7 +19,8 @@
             'to Dos' must not be empty.
           ]
         }
-      ]
+      ],
+      traceId: {Scrubbed}
     }
   }
 }

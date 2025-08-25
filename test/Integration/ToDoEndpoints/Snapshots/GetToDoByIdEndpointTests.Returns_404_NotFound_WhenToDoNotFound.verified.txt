@@ -1,5 +1,8 @@
 ﻿{
   Status: 404 Not Found,
+  Headers: {
+    Correlation-Id: {Scrubbed}
+  },
   Content: {
     Headers: {
       Content-Type: application/problem+json
@@ -8,7 +11,8 @@
       type: https://tools.ietf.org/html/rfc9110#name-404-not-found,
       title: ToDo.NotFound,
       status: 404,
-      detail: ToDo not found.
+      detail: ToDo not found.,
+      traceId: {Scrubbed}
     }
   }
 }

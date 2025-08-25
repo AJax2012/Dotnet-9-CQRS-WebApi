@@ -1,5 +1,8 @@
 ﻿{
   Status: 409 Conflict,
+  Headers: {
+    Correlation-Id: {Scrubbed}
+  },
   Content: {
     Headers: {
       Content-Type: application/problem+json
@@ -8,7 +11,8 @@
       type: https://tools.ietf.org/html/rfc9110#name-409-conflict,
       title: ToDo.Conflict,
       status: 409,
-      detail: ToDo with Title already exists.
+      detail: ToDo with Title already exists.,
+      traceId: {Scrubbed}
     }
   }
 }
