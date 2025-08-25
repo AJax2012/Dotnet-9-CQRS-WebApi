@@ -8,7 +8,8 @@ internal static class CorsConfiguration
     internal static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         var clientOrigin = configuration.GetSection("Authentication:ClientOrigin").Value;
-        var env = configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT")!;
+        var env = configuration.GetValue<string>("ASPNETCORE_ENVIRONMENT") ??
+                  configuration.GetValue<string>("DOTNET_ENVIRONMENT")!;
 
         services.AddCors(options =>
         {
