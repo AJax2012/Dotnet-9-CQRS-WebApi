@@ -25,6 +25,7 @@ internal static class ApiModule
         app
             .UseAuthentication()
             .UseAuthorization()
+            .UseMiddleware<CorrelationIdMiddlware>()
             .UseCorsConfiguration(isDevelopment)
             .UseSerilogRequestLogging()
             .UseHttpsRedirection();
