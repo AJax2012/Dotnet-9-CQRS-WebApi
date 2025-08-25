@@ -7,7 +7,8 @@ internal static class CorsConfiguration
 
     internal static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        var clientOrigin = configuration.GetSection("Authentication:ClientOrigin").Value; 
+        var clientOrigin = configuration.GetSection("Authentication:ClientOrigin").Value;
+        var env = configuration.GetValue<string>("DOTNET_ENVIRONMENT")!;
 
         services.AddCors(options =>
         {
@@ -15,15 +16,24 @@ internal static class CorsConfiguration
                 name: AllowClientOrigin,
                 policy =>
                 {
-                    policy.WithOrigins(clientOrigin!);
-                    policy.AllowAnyMethod();
-                    policy.AllowAnyHeader();
-                    policy.AllowCredentials();
+                    policy
+                        .WithOrigins(clientOrigin!)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
-            options.AddPolicy(AllowScalarOrigin, policy =>
+            
+            if (env.Equals("Development", StringComparison.OrdinalIgnoreCase))
             {
-                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-            });
+                options.AddPolicy(AllowScalarOrigin, policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            }
         });
 
         return services;
