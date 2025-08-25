@@ -9,7 +9,8 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record DeleteToDoCommand(Guid Id, Guid UserId) : ICommand<ErrorOr<Success>>;
 
-public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILogger logger) : ICommandHandler<DeleteToDoCommand, ErrorOr<Success>>
+public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILogger logger) 
+    : ICommandHandler<DeleteToDoCommand, ErrorOr<Success>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger;

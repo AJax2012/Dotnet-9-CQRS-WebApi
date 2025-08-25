@@ -10,7 +10,8 @@ namespace SourceName.Application.ToDos.Queries;
 
 public record GetToDoByIdQuery(Guid Id, Guid UserId) : ICommand<ErrorOr<ToDo>>;
 
-public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger logger) : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDo>>
+public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger logger) 
+    : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDo>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger;

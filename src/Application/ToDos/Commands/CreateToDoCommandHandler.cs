@@ -11,7 +11,8 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record CreateToDoCommand(Guid UserId, string Title) : ICommand<ErrorOr<Guid>>;
 
-public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger logger) : ICommandHandler<CreateToDoCommand, ErrorOr<Guid>>
+public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger logger) 
+    : ICommandHandler<CreateToDoCommand, ErrorOr<Guid>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
     private readonly ILogger _logger = logger;

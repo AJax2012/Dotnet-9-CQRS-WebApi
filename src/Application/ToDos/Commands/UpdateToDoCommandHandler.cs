@@ -10,7 +10,8 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record UpdateToDoCommand(Guid Id, Guid UserId, string Title, bool IsCompleted) : ICommand<ErrorOr<ToDo>>;
 
-public class UpdateToDoCommandHandler(IToDosRepository toDosRepository, ILogger logger) : ICommandHandler<UpdateToDoCommand, ErrorOr<ToDo>>
+public class UpdateToDoCommandHandler(IToDosRepository toDosRepository, ILogger logger) 
+    : ICommandHandler<UpdateToDoCommand, ErrorOr<ToDo>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger;

@@ -19,8 +19,8 @@ public record GetToDosFilteredQuery(
     string? Title = null,
     bool? IsCompleted = null) : ICommand<ErrorOr<Models.ToDos>>;
 
-public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogger logger) : 
-    ICommandHandler<GetToDosFilteredQuery, ErrorOr<Models.ToDos>>
+public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogger logger) 
+    : ICommandHandler<GetToDosFilteredQuery, ErrorOr<Models.ToDos>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
     private readonly ILogger _logger = logger;

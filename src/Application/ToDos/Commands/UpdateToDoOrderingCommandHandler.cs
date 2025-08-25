@@ -13,7 +13,8 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record UpdateToDoOrderingCommand(Dictionary<Guid, int> ToDos, Guid UserId) : ICommand<ErrorOr<Success>>;
 
-public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, ILogger logger) : ICommandHandler<UpdateToDoOrderingCommand, ErrorOr<Success>>
+public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, ILogger logger) 
+    : ICommandHandler<UpdateToDoOrderingCommand, ErrorOr<Success>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger;
