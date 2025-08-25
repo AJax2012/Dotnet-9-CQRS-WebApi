@@ -13,7 +13,7 @@ internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoRespon
     {
         Post("/");
         Group<ToDosGroup>();
-        
+
         Description(x => x
                 .Accepts<CreateToDoRequest>("application/json")
                 .Produces<CreateToDoResponse>(StatusCodes.Status201Created, "application/json")
@@ -21,7 +21,7 @@ internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoRespon
                 .ProducesProblem(StatusCodes.Status409Conflict)
                 .ProducesProblem(StatusCodes.Status500InternalServerError)
                 .WithName("CreateToDo"));
-        
+
         Summary(s =>
         {
             s.Summary = "Creates a new To Do";
@@ -32,7 +32,7 @@ internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoRespon
             s.Responses[500] = ToDoResponseExamples.SqlErrorResponse;
         });
     }
-    
+
     public override async Task HandleAsync(CreateToDoRequest request, CancellationToken ct)
     {
         if (ValidationFailed)
@@ -44,7 +44,7 @@ internal class CreateToDoEndpoint : Endpoint<CreateToDoRequest, CreateToDoRespon
         ArgumentNullException.ThrowIfNull(request);
         var result = await new CreateToDoCommand(request.UserId, request.Title!)
             .ExecuteAsync(ct);
-        
+
         await result.Match(
             id => SendCreatedAtAsync<GetToDoByIdEndpoint>(new CreateToDoResponse(id), new(id), cancellation: ct),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

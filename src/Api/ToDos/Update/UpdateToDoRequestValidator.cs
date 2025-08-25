@@ -10,7 +10,7 @@ internal class UpdateToDoRequestValidator : Validator<UpdateToDoRequest>
     {
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.IsCompleted).NotNull();
-        
+
         RuleFor(x => x.Title)
             .NotEmpty()
             .MaximumLength(ToDoConstants.TitleMaxLength);

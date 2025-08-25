@@ -9,7 +9,7 @@ public class ToDoEntity : AuditableGuidEntity
     public Guid CreatedByUserId { get; }
     public ToDoTitle Title { get; private set; }
     public ToDoStatus Status { get; private set; }
-    
+
     public ToDoEntity(
         Guid createdByUserid,
         ToDoTitle title,
@@ -19,15 +19,15 @@ public class ToDoEntity : AuditableGuidEntity
         Title = title;
         Status = new(false, displayOrder);
     }
-    
+
     [JsonConstructor]
     public ToDoEntity(
-        Guid id, 
-        Guid createdByUserid, 
+        Guid id,
+        Guid createdByUserid,
         ToDoTitle title,
         ToDoStatus status,
-        DateTime createdAt, 
-        DateTime updatedAt) 
+        DateTime createdAt,
+        DateTime updatedAt)
         : base(id, createdAt, updatedAt)
     {
         CreatedByUserId = createdByUserid;

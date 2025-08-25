@@ -1,4 +1,5 @@
 using System.Diagnostics;
+
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace SourceName.AppHost;
@@ -8,11 +9,11 @@ internal static class DocumentationExtensions
     internal static IResourceBuilder<T> WithSwaggerUiDocs<T>(this IResourceBuilder<T> resourceBuilder)
         where T : IResourceWithEndpoints
         => WithOpenApiDocuments(resourceBuilder, "swagger-ui-docs", "Swagger UI Documentation", "swagger");
-    
+
     internal static IResourceBuilder<T> WithScalarUiDocs<T>(this IResourceBuilder<T> resourceBuilder)
         where T : IResourceWithEndpoints
         => WithOpenApiDocuments(resourceBuilder, "scalar-ui-docs", "Scalar UI Documentation", "scalar/v1");
-    
+
     private static IResourceBuilder<T> WithOpenApiDocuments<T>(
         this IResourceBuilder<T> resourceBuilder,
         string name,
@@ -27,7 +28,7 @@ internal static class DocumentationExtensions
             {
                 var baseUrl = resourceBuilder.GetEndpoint("https");
                 var url = $"{baseUrl.Url}/{openApiUiPath}";
-        
+
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                 return Task.FromResult(new ExecuteCommandResult { Success = true });
             },
@@ -35,8 +36,8 @@ internal static class DocumentationExtensions
             {
                 IconName = "Document",
                 UpdateState = context =>
-                    context.ResourceSnapshot.HealthStatus == HealthStatus.Healthy ? 
-                        ResourceCommandState.Enabled : 
+                    context.ResourceSnapshot.HealthStatus == HealthStatus.Healthy ?
+                        ResourceCommandState.Enabled :
                         ResourceCommandState.Disabled
             });
     }

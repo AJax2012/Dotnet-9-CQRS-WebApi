@@ -13,7 +13,7 @@ public static class ToDoNextResultToken
         {
             return null;
         }
-        
+
         var bytes = Convert.FromBase64String(token);
         var json = Encoding.UTF8.GetString(bytes);
         return JsonSerializer.Deserialize<ToDoEntity>(json);
@@ -25,7 +25,7 @@ public static class ToDoNextResultToken
         {
             return string.Empty;
         }
-        
+
         var json = JsonSerializer.Serialize(entity);
         var bytes = Encoding.UTF8.GetBytes(json);
         return Convert.ToBase64String(bytes);

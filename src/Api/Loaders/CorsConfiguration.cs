@@ -22,7 +22,7 @@ internal static class CorsConfiguration
                         .AllowAnyHeader()
                         .AllowCredentials();
                 });
-            
+
             if (env.Equals("Development", StringComparison.OrdinalIgnoreCase))
             {
                 options.AddPolicy(AllowScalarOrigin, policy =>
@@ -38,7 +38,7 @@ internal static class CorsConfiguration
 
         return services;
     }
-    
+
     internal static IApplicationBuilder UseCorsConfiguration(this IApplicationBuilder app, bool isDevelopment)
     {
         app.UseCors(AllowClientOrigin);

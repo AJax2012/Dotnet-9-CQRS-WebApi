@@ -6,7 +6,7 @@ public static class VerifyGlobalSettings
 {
     [ModuleInitializer]
     public static void Initialize()
-    { 
+    {
         VerifyHttp.Initialize();
         Recording.Start();
     }

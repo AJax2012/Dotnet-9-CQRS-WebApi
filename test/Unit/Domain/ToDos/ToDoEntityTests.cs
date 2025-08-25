@@ -11,9 +11,9 @@ public class ToDoEntityTests
         var createdByUserId = Guid.NewGuid();
         var title = new Faker().Random.Words();
         var order = new Faker().Random.Int();
-        
+
         var sut = new ToDoEntity(createdByUserId, new(title), order);
-        
+
         Assert.Equal(createdByUserId, sut.CreatedByUserId);
         Assert.Equal(title, sut.Title.Value);
         Assert.Equal(order, sut.Status.DisplayOrder);
@@ -36,7 +36,7 @@ public class ToDoEntityTests
         var updatedAt = new Faker().Date.Past();
 
         var sut = new ToDoEntity(id, createdByUserId, new(title), new ToDoStatus(isCompleted, displayOrder), createdAt, updatedAt);
-        
+
         Assert.Equal(id, sut.Id);
         Assert.Equal(createdByUserId, sut.CreatedByUserId);
         Assert.Equal(title, sut.Title.Value);
@@ -45,7 +45,7 @@ public class ToDoEntityTests
         Assert.Equal(updatedAt, sut.UpdatedAt);
         Assert.Equal(isCompleted ? null : displayOrder, sut.Status.DisplayOrder);
     }
-    
+
     [Fact]
     public void Update_SetsTitle_IsCompleted_AndUpdatedAt_WhenTitleAndIsCompletedProvided()
     {
@@ -53,14 +53,14 @@ public class ToDoEntityTests
         var originalUpdatedAt = sut.UpdatedAt;
         var title = new Faker().Random.Words();
         var isCompleted = !sut.Status.IsCompleted;
-        
+
         sut.Update(title, isCompleted);
-        
+
         Assert.Equal(title, sut.Title.Value);
         Assert.Equal(isCompleted, sut.Status.IsCompleted);
         Assert.NotEqual(originalUpdatedAt, sut.UpdatedAt);
     }
-    
+
     [Fact]
     public void Update_SetsOrderToNull_WhenIsCompletedIsTrue()
     {
@@ -68,7 +68,7 @@ public class ToDoEntityTests
         sut.Update(sut.Title.Value, true);
         Assert.Null(sut.Status.DisplayOrder);
     }
-    
+
     [Fact]
     public void UpdateOrder_DoesNotSetOrder_WhenIsCompletedIsTrue()
     {
@@ -77,7 +77,7 @@ public class ToDoEntityTests
         sut.UpdateOrder(new Faker().Random.Int());
         Assert.Null(sut.Status.DisplayOrder);
     }
-    
+
     [Fact]
     public void UpdateOrder_OrderIsUpdated_WhenNewOrderProvidedAndIsCompletedIsFalse()
     {

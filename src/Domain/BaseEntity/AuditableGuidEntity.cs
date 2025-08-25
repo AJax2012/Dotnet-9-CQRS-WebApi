@@ -8,14 +8,14 @@ public abstract class AuditableGuidEntity
     public Guid Id { get; }
     public DateTime CreatedAt { get; }
     public DateTime UpdatedAt { get; internal set; }
-    
+
     protected AuditableGuidEntity()
     {
         this.Id = Guid.NewGuid();
         this.CreatedAt = DateTime.UtcNow;
         this.UpdatedAt = DateTime.UtcNow;
     }
-    
+
     protected AuditableGuidEntity(Guid id, DateTime createdAt, DateTime updatedAt)
     {
         this.Id = id;
@@ -27,7 +27,7 @@ public abstract class AuditableGuidEntity
 
     public override bool Equals(object? obj)
     {
-        return obj != null && !(this.GetType() != obj.GetType()) && this.Id == ((AuditableGuidEntity) obj).Id;
+        return obj != null && !(this.GetType() != obj.GetType()) && this.Id == ((AuditableGuidEntity)obj).Id;
     }
 
     public override int GetHashCode() => this.Id.GetHashCode();

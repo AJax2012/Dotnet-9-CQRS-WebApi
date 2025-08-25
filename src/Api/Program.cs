@@ -1,4 +1,5 @@
 using FastEndpoints;
+
 using Serilog;
 
 using SourceName.Api.Loaders;

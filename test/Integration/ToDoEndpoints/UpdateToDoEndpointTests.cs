@@ -16,13 +16,13 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     public UpdateToDoEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        
+
         var jwtToken = factory.JwtTokenService
             .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
-        
+
         _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
-    
+
     [Fact]
     public async Task Returns_204_NoContent_WhenToDoUpdated()
     {
@@ -31,12 +31,12 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
 
         var updateRequest = new UpdateToDoRequest
         {
-            Title = "Updated title", 
+            Title = "Updated title",
             IsCompleted = false,
         };
-        
+
         var actual = await _client.PutAsJsonAsync($"/api/todos/{createdContent!.Id}", updateRequest);
-        
+
         await Verify(actual, _verifySettings);
     }
 
@@ -45,26 +45,26 @@ public class UpdateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     {
         var updateRequest = new UpdateToDoRequest
         {
-            Title = string.Empty, 
+            Title = string.Empty,
             IsCompleted = false,
         };
-        
+
         var actual = await _client.PutAsJsonAsync($"/api/todos/{Guid.NewGuid()}", updateRequest);
-        
+
         await Verify(actual, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Returns_404_NotFound_WhenToDoNotFound()
     {
         var updateRequest = new UpdateToDoRequest
         {
-            Title = "Updated toDoTitle", 
+            Title = "Updated toDoTitle",
             IsCompleted = false,
         };
-        
+
         var actual = await _client.PutAsJsonAsync($"/api/todos/{Guid.NewGuid()}", updateRequest);
-        
+
         await Verify(actual, _verifySettings);
     }
 }

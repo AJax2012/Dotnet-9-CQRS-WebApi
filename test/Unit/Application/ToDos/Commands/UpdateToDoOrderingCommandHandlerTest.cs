@@ -1,4 +1,5 @@
 using ErrorOr;
+
 using Serilog;
 
 using SourceName.Application.ToDos.Commands;
@@ -20,7 +21,7 @@ public class UpdateToDoOrderingCommandHandlerTest
     {
         _sut = new(_toDoRepository, _logger);
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_ThrowsArgumentNullException_WhenCommandIsNull()
     {
@@ -41,37 +42,37 @@ public class UpdateToDoOrderingCommandHandlerTest
                 null,
                 CancellationToken.None);
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoDoesNotExist()
     {
         var actual = await _sut.ExecuteAsync(new([], Guid.NewGuid()), CancellationToken.None);
-        
+
         _logger.Received()
             .Warning("No ToDos found");
-        
+
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoExistsButUserIdDoesNotMatch()
     {
         var requestUserId = Guid.NewGuid();
         var toDos = ToDoEntityFaker.Generate(5);
-        
+
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
-        
+
         var actual = await _sut.ExecuteAsync(new([], requestUserId), CancellationToken.None);
-        
+
         _logger.Received()
             .Warning("Not all ToDos belong to user {UserId}", requestUserId);
-        
+
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_CallsUpdateAsync_WhenToDoExistsAndUserIdMatches()
     {
@@ -84,12 +85,12 @@ public class UpdateToDoOrderingCommandHandlerTest
             var order = toDos.IndexOf(toDo) + 1;
             requestDictionary.Add(toDo.Id, order);
         }
-        
+
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
-        
+
         await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
-        
+
         foreach (var toDo in toDos)
         {
             toDo.UpdateOrder(requestDictionary[toDo.Id]);
@@ -100,25 +101,25 @@ public class UpdateToDoOrderingCommandHandlerTest
                     ), CancellationToken.None);
         }
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsSqlError_WhenUpdateAsyncFails()
     {
         var toDos = ToDoEntityFaker.Generate(5);
-        
+
         var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
-        
+
         _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDoEntity>>(), Arg.Any<CancellationToken>())
             .Returns(0);
-        
+
         var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
-        
+
         _logger.Received()
             .Error("Failed to update order");
-        
+
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.SqlError, actual.FirstError);
     }
@@ -127,17 +128,17 @@ public class UpdateToDoOrderingCommandHandlerTest
     public async Task ExecuteAsync_ReturnsSuccess_WhenUpdateAsyncSucceeds()
     {
         var toDos = ToDoEntityFaker.Generate(5);
-        
+
         var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
-        
+
         _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDoEntity>>(), Arg.Any<CancellationToken>())
             .Returns(5);
 
         var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
-        
+
         Assert.Empty(actual.ErrorsOrEmptyList);
         Assert.Equal(Result.Success, actual.Value);
     }

@@ -18,5 +18,5 @@ public class CreateToDoRequest
     /// User Id from authentication token.
     /// </summary>
     [FromClaim(JwtRegisteredClaimNames.NameId, IsRequired = true)]
-    public Guid UserId { get; init; } 
+    public Guid UserId { get; init; }
 }

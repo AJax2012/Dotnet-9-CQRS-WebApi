@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FastEndpoints.Security;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using SourceName.Api.Loaders.JwtAuth;
 
 namespace SourceName.Api.Loaders;
@@ -15,13 +17,13 @@ internal static class IdentityConfiguration
             .Bind(configuration.GetSection(BearerAuthorizationScheme.Key))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-        
+
         services.AddSingleton<JwtTokenService>();
         services.AddTransient<ApplicationJwtBearerEvents>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
         services.AddFastEndpointsAuthentication();
         services.AddAuthorization();
-        
+
         return services;
     }
 
@@ -30,7 +32,7 @@ internal static class IdentityConfiguration
         var tokenService = services
             .BuildServiceProvider()
             .GetRequiredService<JwtTokenService>();
-        
+
         services.AddAuthenticationJwtBearer(
             s => s.SigningKey = tokenService.GetSigningKey(),
             b =>

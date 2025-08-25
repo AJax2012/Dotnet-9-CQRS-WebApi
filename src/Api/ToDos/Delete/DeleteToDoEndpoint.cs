@@ -8,12 +8,12 @@ namespace SourceName.Api.ToDos.Delete;
 
 internal class DeleteToDoEndpoint : Endpoint<DeleteToDoRequest>
 {
-    
+
     public override void Configure()
     {
         Delete("/{id:guid}");
         Group<ToDosGroup>();
-        
+
         Description(x => x
             .Accepts<DeleteToDoRequest>()
             .Produces(StatusCodes.Status204NoContent)
@@ -21,7 +21,7 @@ internal class DeleteToDoEndpoint : Endpoint<DeleteToDoRequest>
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithName("DeleteToDo"));
-        
+
         Summary(s =>
         {
             s.Summary = "Delete a ToDo by id";
@@ -31,7 +31,7 @@ internal class DeleteToDoEndpoint : Endpoint<DeleteToDoRequest>
             s.Responses[500] = ToDoResponseExamples.SqlErrorResponse;
         });
     }
-    
+
     public override async Task HandleAsync(DeleteToDoRequest request, CancellationToken cancellationToken)
     {
         if (ValidationFailed)
@@ -43,7 +43,7 @@ internal class DeleteToDoEndpoint : Endpoint<DeleteToDoRequest>
         ArgumentNullException.ThrowIfNull(request);
         var result = await new DeleteToDoCommand(request.Id, request.UserId)
             .ExecuteAsync(cancellationToken);
-        
+
         await result.Match(
             _ => SendNoContentAsync(cancellationToken),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

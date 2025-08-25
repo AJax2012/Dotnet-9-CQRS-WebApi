@@ -18,13 +18,13 @@ public class GetFilteredToDosQueryHandlerTest
     {
         _sut = new(_toDoRepository, _logger);
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_ThrowsArgumentNullException_WhenRequestIsNull()
     {
         await Assert.ThrowsAsync<ArgumentNullException>(() => _sut.ExecuteAsync(null!, CancellationToken.None));
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_CallsGetFilteredAsync_WhenRequestIsNotNull()
     {
@@ -44,7 +44,7 @@ public class GetFilteredToDosQueryHandlerTest
                 null,
                 Arg.Any<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task ExecuteAsync_CallsGetFilteredAsync_WithCursor_WhenRequestHasCursor()
     {
@@ -62,7 +62,7 @@ public class GetFilteredToDosQueryHandlerTest
                     x.Title == request.Title &&
                     x.IsCompleted == request.IsCompleted
                 ),
-                Arg.Is<ToDoEntity>(x => 
+                Arg.Is<ToDoEntity>(x =>
                     x.Id == cursorEntity.Id &&
                     x.Status.DisplayOrder == cursorEntity.Status.DisplayOrder &&
                     x.Title.Value == cursorEntity.Title.Value),
@@ -73,14 +73,14 @@ public class GetFilteredToDosQueryHandlerTest
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDosNotFound()
     {
         var actual = await _sut.ExecuteAsync(GetToDosFilteredQueryFaker.Faker.Generate(), CancellationToken.None);
-        
+
         _logger.Received()
             .Debug("No ToDos found");
-        
+
         Assert.Single(actual.ErrorsOrEmptyList);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
     }
-    
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -90,12 +90,12 @@ public class GetFilteredToDosQueryHandlerTest
         var numberToGenerate = hasNextPage ? request.Limit!.Value + 1 : request.Limit!.Value;
         var toDos = ToDoEntityFaker.Generate(numberToGenerate);
         var expectedNextPageToken = ToDoNextResultToken.EncodeToken(toDos.Last());
-        
+
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
 
         var expected = new List<ToDo>();
-        
+
         if (hasNextPage)
         {
             expected.AddRange(
@@ -105,16 +105,16 @@ public class GetFilteredToDosQueryHandlerTest
         }
         else
         {
-            expected.AddRange(toDos.Select(x => 
+            expected.AddRange(toDos.Select(x =>
                 x.MapFromEntity()));
         }
-        
+
         var actual = await _sut.ExecuteAsync(GetToDosFilteredQueryFaker.Faker.Generate(), CancellationToken.None);
-        
+
         Assert.Empty(actual.ErrorsOrEmptyList);
         Assert.Equal(hasNextPage, actual.Value.HasNextPage);
         Assert.Equal(expectedNextPageToken, actual.Value.NextPageToken);
-        
+
         Assert.Equal(expected.Count, actual.Value.Items.Count);
 
         foreach (var item in actual.Value.Items)

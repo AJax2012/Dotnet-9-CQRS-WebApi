@@ -1,4 +1,5 @@
 ﻿using FluentMigrator.Runner;
+
 using SourceName.Migrator.Migrations;
 
 var builder = Host.CreateApplicationBuilder(args);

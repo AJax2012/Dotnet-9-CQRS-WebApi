@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using FastEndpoints;
+
 using Serilog;
 
 using SourceName.Application.ToDos.Contracts;
@@ -11,7 +13,7 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record CreateToDoCommand(Guid UserId, string Title) : ICommand<ErrorOr<Guid>>;
 
-public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger logger) 
+public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger logger)
     : ICommandHandler<CreateToDoCommand, ErrorOr<Guid>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
@@ -48,7 +50,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger l
             _logger.Error("Failed to create ToDo for user {UserId}", request.UserId);
             return ToDoErrors.SqlError;
         }
-        
+
         return toDo.Id;
     }
 }

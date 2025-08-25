@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 
 using ErrorOr;
+
 using FastEndpoints;
+
 using Serilog;
 
 using SourceName.Application.ToDos.Contracts;
@@ -19,7 +21,7 @@ public record GetToDosFilteredQuery(
     string? Title = null,
     bool? IsCompleted = null) : ICommand<ErrorOr<Models.ToDos>>;
 
-public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogger logger) 
+public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogger logger)
     : ICommandHandler<GetToDosFilteredQuery, ErrorOr<Models.ToDos>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
@@ -28,7 +30,7 @@ public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogg
     public async Task<ErrorOr<Models.ToDos>> ExecuteAsync(GetToDosFilteredQuery request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
-        
+
         var cursor = ToDoNextResultToken.DecodeToken(request.NextPageToken);
         var filteredToDos = (await _toDoRepository.GetFilteredAsync(request, cursor, ct))
             .ToImmutableList();
@@ -43,7 +45,7 @@ public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogg
             .Take(request.Limit ?? filteredToDos.Count)
             .Select(x => x.MapFromEntity())
             .ToImmutableList();
-        
+
         var hasNextPage = filteredToDos.Count > (request.Limit ?? filteredToDos.Count);
 
         return new Models.ToDos(

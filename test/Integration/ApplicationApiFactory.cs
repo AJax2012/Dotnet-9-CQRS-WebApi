@@ -27,9 +27,9 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
         new PostgreSqlBuilder()
             .WithDatabase("SourceName")
             .Build();
-    
+
     internal JwtTokenService JwtTokenService => Services.GetRequiredService<JwtTokenService>();
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureLogging(logging =>
@@ -42,7 +42,7 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
             services.RemoveAll<IDbConnectionFactory>();
             services.AddSingleton<IDbConnectionFactory>(_ =>
                 new NpgsqlConnectionFactory(_pgContainer.GetConnectionString()));
-            
+
             services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
@@ -51,7 +51,7 @@ public class ApplicationApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLi
                 .BuildServiceProvider(false);
         });
     }
-    
+
     public async Task InitializeAsync()
     {
         await _pgContainer.StartAsync();

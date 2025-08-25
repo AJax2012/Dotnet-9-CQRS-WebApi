@@ -3,7 +3,7 @@ using FluentMigrator;
 namespace SourceName.Migrator.Migrations;
 
 [Migration(2025040601)]
-public class AddToDosTable : Migration 
+public class AddToDosTable : Migration
 {
     public override void Up()
     {

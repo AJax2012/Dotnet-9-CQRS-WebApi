@@ -7,7 +7,7 @@ public class ToDoDbEntity
 {
     // For Dapper
     public ToDoDbEntity() { }
-    
+
     public ToDoDbEntity(ToDoEntity toDo)
     {
         Id = toDo.Id;
@@ -18,7 +18,7 @@ public class ToDoDbEntity
         CreatedAt = toDo.CreatedAt;
         UpdatedAt = toDo.UpdatedAt;
     }
-    
+
     internal static ToDoEntity? ToEntity(ToDoDbEntity? dbEntity)
     {
         if (dbEntity is null)
@@ -34,7 +34,7 @@ public class ToDoDbEntity
             dbEntity.CreatedAt,
             dbEntity.UpdatedAt);
     }
-    
+
     public Guid Id { get; }
     public Guid CreatedByUserId { get; }
     public string Title { get; }

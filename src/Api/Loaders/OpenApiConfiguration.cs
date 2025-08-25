@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 using FastEndpoints.Swagger;
+
 using Scalar.AspNetCore;
 
 using SourceName.Api.Loaders.JwtAuth;
@@ -44,13 +45,13 @@ internal static class OpenApiConfiguration
         }
 
         var jwtBearerConfiguration = app.Services.GetRequiredService<JwtTokenService>();
-        
+
         var identity = new ClaimsIdentity(
         [
             new(JwtRegisteredClaimNames.Sub, "scalar@gardnerwebtech.com"),
             new(JwtRegisteredClaimNames.NameId, Guid.NewGuid().ToString())
         ]);
-        
+
         return jwtBearerConfiguration.GenerateJwtToken(identity);
     }
 }

@@ -13,10 +13,10 @@ internal static class ToDoRequestExamples
     private const string Title = "Example ToDo";
     private const string NextPageToken = "eyJJZCI6IjIwMjJmODdhLWE1YjItNGQxZi1iOGUyLTRhNzY1MjU3YzMzMiIsIlRpdGxlIjoiRXhhbXBsZSBUb0RvIn0=";
     private static readonly Guid ExampleId = Guid.NewGuid();
-    
+
     internal static readonly CreateToDoRequest CreateToDoRequest = new() { Title = Title };
     internal static readonly UpdateToDoRequest UpdateToDoRequest = new() { Id = ExampleId, Title = Title, IsCompleted = false };
-    internal static readonly UpdateToDoOrderingRequest UpdateToDoOrderingRequest = new() { ToDos = new(){{ ExampleId, 1 }, { Guid.NewGuid(), 2 }}};
+    internal static readonly UpdateToDoOrderingRequest UpdateToDoOrderingRequest = new() { ToDos = new() { { ExampleId, 1 }, { Guid.NewGuid(), 2 } } };
     internal static readonly DeleteToDoRequest DeleteToDoRequest = new() { Id = ExampleId };
     internal static readonly GetToDoByIdRequest GetToDoByIdRequest = new() { Id = ExampleId };
 

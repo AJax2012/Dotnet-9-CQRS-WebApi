@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+
 using SourceName.Api.ToDos.Create;
 using SourceName.Test.Integration.Auth;
 using SourceName.Test.Integration.VerifyConfig;
@@ -14,10 +15,10 @@ public class CreateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
     public CreateToDoEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        
+
         var jwtToken = factory.JwtTokenService
             .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
-        
+
         _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
 
@@ -27,7 +28,7 @@ public class CreateToDoEndpointTests : IClassFixture<ApplicationApiFactory>
         var actual = await _client.PostAsJsonAsync("/api/todos", CreateToDoRequestFaker.Faker.Generate());
         await Verify(actual, _verifySettings);
     }
-    
+
     [Fact]
     public async Task Returns_400_BadRequest_WhenToDoInvalid()
     {

@@ -18,7 +18,7 @@ public class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
             context.Response.Headers.Append("Token-Expired", "true");
             return Task.CompletedTask;
         }
-        
+
         _logger.Error(context.Exception, "JWT Token Error");
         context.Response.Headers.Append("Token-Error", "invalid token");
 

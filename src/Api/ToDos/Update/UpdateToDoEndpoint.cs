@@ -12,7 +12,7 @@ internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
     {
         Put("/{id:guid}");
         Group<ToDosGroup>();
-        
+
         Description(x => x
             .Accepts<UpdateToDoRequest>("application/json")
             .Produces<ToDoResource>(StatusCodes.Status200OK, "application/json")
@@ -20,7 +20,7 @@ internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithName("UpdateToDo"));
-        
+
         Summary(s =>
         {
             s.Summary = "Update a ToDo by id";
@@ -31,7 +31,7 @@ internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
             s.Responses[500] = ToDoResponseExamples.SqlErrorResponse;
         });
     }
-    
+
     public override async Task HandleAsync(UpdateToDoRequest request, CancellationToken cancellationToken)
     {
         if (ValidationFailed)
@@ -39,11 +39,11 @@ internal class UpdateToDoEndpoint : Endpoint<UpdateToDoRequest, ToDoResource>
             await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
-        
+
         ArgumentNullException.ThrowIfNull(request);
         var result = await new UpdateToDoCommand(request.Id, request.UserId, request.Title, request.IsCompleted)
             .ExecuteAsync(cancellationToken);
-        
+
         await result.Match(
             entity => SendOkAsync(entity.MapToResponse(), cancellationToken),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

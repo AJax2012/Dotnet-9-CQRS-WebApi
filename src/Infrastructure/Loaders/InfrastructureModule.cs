@@ -16,9 +16,9 @@ public static class InfrastructureModule
 {
     public static IServiceCollection AddInfrastructureModule(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IDbConnectionFactory>(_ => 
+        services.AddSingleton<IDbConnectionFactory>(_ =>
             new NpgsqlConnectionFactory(configuration.GetConnectionString("Default")!));
-        
+
 #if IncludeExample || true
         services.AddScoped<IToDosRepository, ToDosRepository>();
 #endif

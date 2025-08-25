@@ -10,7 +10,7 @@ public class ToDoStatus
         IsCompleted = isCompleted;
         SetDisplayOrder(displayOrder);
     }
-    
+
     internal void Update(bool isCompleted, int? displayOrder)
     {
         IsCompleted = isCompleted;
@@ -24,7 +24,7 @@ public class ToDoStatus
             DisplayOrder = null;
             return;
         }
-        
+
         DisplayOrder = displayOrder ?? DisplayOrder;
     }
 }

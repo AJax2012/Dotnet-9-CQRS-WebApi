@@ -8,7 +8,7 @@ var postgres = builder.AddPostgres("postgres")
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithPgAdmin();
-    
+
 var postgresDatabase = postgres.AddDatabase(pgName);
 
 var seq = builder.AddSeq("seq")

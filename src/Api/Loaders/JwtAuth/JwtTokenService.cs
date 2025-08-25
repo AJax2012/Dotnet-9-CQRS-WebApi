@@ -34,12 +34,12 @@ public class JwtTokenService(IOptions<BearerAuthorizationScheme> options)
             Audience = bearerSchema.ValidAudience,
             Issuer = bearerSchema.ValidIssuer
         };
-        
+
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var token = jwtSecurityTokenHandler.CreateJwtSecurityToken(tokenDescriptor);
         return jwtSecurityTokenHandler.WriteToken(token);
     }
-    
+
     internal TokenValidationParameters GetTokenValidationParameters() =>
         new()
         {
@@ -49,14 +49,14 @@ public class JwtTokenService(IOptions<BearerAuthorizationScheme> options)
             IssuerSigningKey = GetSecurityKey(),
             TryAllIssuerSigningKeys = true
         };
-    
+
     internal string GetSigningKey() => _scheme.SigningKeys.First().Value;
 
     private SymmetricSecurityKey GetSecurityKey()
     {
         var signingKey = _scheme.SigningKeys.FirstOrDefault();
         ArgumentNullException.ThrowIfNull(signingKey);
-        
+
         return new(Encoding.UTF8.GetBytes(signingKey.Value))
         {
             KeyId = signingKey.Id

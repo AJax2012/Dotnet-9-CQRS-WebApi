@@ -1,5 +1,7 @@
 using ErrorOr;
+
 using FastEndpoints;
+
 using Serilog;
 
 using SourceName.Application.ToDos.Contracts;
@@ -10,7 +12,7 @@ namespace SourceName.Application.ToDos.Queries;
 
 public record GetToDoByIdQuery(Guid Id, Guid UserId) : ICommand<ErrorOr<ToDo>>;
 
-public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger logger) 
+public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger logger)
     : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDo>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
@@ -26,13 +28,13 @@ public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger l
             _logger.Warning("Todo with id {Id} not found", request.Id);
             return ToDoErrors.NotFound;
         }
-        
+
         if (toDo.CreatedByUserId != request.UserId)
         {
             _logger.Warning("Todo with id {Id} does not belong to user {UserId}", request.Id, request.UserId);
             return ToDoErrors.NotFound;
         }
-        
+
         return toDo.MapFromEntity();
     }
 }

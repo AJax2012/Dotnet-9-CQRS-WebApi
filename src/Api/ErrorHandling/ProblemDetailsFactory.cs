@@ -1,4 +1,5 @@
 using ErrorOr;
+
 using FluentValidation.Results;
 
 namespace SourceName.Api.ErrorHandling;
@@ -17,9 +18,9 @@ internal static class ProblemDetailsFactory
         {
             throw new InvalidOperationException("No errors were found.");
         }
-        
+
         var firstError = errors[0];
-        
+
         return Results.Problem(
             title: firstError.Code,
             detail: firstError.Description,
@@ -41,7 +42,7 @@ internal static class ProblemDetailsFactory
         {
             throw new InvalidOperationException("No validation errors were found.");
         }
-        
+
         return Results.Problem(
             title: "Invalid Request",
             detail: "The request was invalid",

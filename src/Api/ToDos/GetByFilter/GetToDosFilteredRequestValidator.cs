@@ -12,7 +12,7 @@ internal class GetToDosFilteredRequestValidator : Validator<GetToDosFilteredRequ
     {
         RuleFor(x => x.OrderBy)
             .IsEnumName(typeof(ToDosOrderBy), false);
-        
+
         RuleFor(x => x.Limit)
             .NotNull()
             .GreaterThanOrEqualTo(5)

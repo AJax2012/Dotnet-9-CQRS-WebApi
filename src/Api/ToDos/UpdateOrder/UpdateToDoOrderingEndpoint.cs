@@ -12,7 +12,7 @@ internal class UpdateToDoOrderingEndpoint : Endpoint<UpdateToDoOrderingRequest>
     {
         Put("/order");
         Group<ToDosGroup>();
-        
+
         Description(x => x
             .Accepts<UpdateToDoOrderingRequest>("application/json")
             .Produces(StatusCodes.Status204NoContent)
@@ -20,7 +20,7 @@ internal class UpdateToDoOrderingEndpoint : Endpoint<UpdateToDoOrderingRequest>
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .WithName("UpdateToDoOrdering"));
-        
+
         Summary(s =>
         {
             s.Summary = "Update orders of multiple To Dos";
@@ -30,7 +30,7 @@ internal class UpdateToDoOrderingEndpoint : Endpoint<UpdateToDoOrderingRequest>
             s.Responses[500] = ToDoResponseExamples.SqlErrorResponse;
         });
     }
-    
+
     public override async Task HandleAsync(UpdateToDoOrderingRequest request, CancellationToken cancellationToken)
     {
         if (ValidationFailed)
@@ -38,10 +38,10 @@ internal class UpdateToDoOrderingEndpoint : Endpoint<UpdateToDoOrderingRequest>
             await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
-        
+
         var result = await new UpdateToDoOrderingCommand(request.ToDos, request.UserId)
             .ExecuteAsync(cancellationToken);
-        
+
         await result.Match(
             _ => SendNoContentAsync(cancellationToken),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

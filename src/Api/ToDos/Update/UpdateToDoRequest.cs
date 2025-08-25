@@ -16,12 +16,12 @@ public class UpdateToDoRequest
     /// </summary>
     [FromRoute(Name = "id")]
     public Guid Id { get; init; }
-    
+
     /// <summary>
     /// Title of to do
     /// </summary>
     public required string Title { get; init; }
-    
+
     /// <summary>
     /// Is the to do completed 
     /// </summary>

@@ -12,19 +12,19 @@ internal class GetToDosFilteredEndpoint : Endpoint<GetToDosFilteredRequest, ToDo
     {
         Get("/");
         Group<ToDosGroup>();
-        
+
         Description(x => x
             .Accepts<GetToDosFilteredRequest>()
             .Produces<ToDosResponse>(StatusCodes.Status200OK, "application/json")
             .ProducesProblemFE()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName("GetToDosFiltered"));
-        
+
         Summary(s =>
         {
             s.Summary = "Get To Dos filtered";
             s.Description = "Get To Dos filtered";
-            s.RequestParam(x => x.Limit,  "The maximum number of To Dos to return. Must be between 5 and 100. Defaults to 25.");
+            s.RequestParam(x => x.Limit, "The maximum number of To Dos to return. Must be between 5 and 100. Defaults to 25.");
             s.RequestParam(x => x.OrderBy, "The property to order the filtered To Do results by. Must be either Id or Title. Id also sorts by date created. Defaults to Id.");
             s.RequestParam(x => x.IsDescending, "If true, returns results in descending order. If false, returns results in ascending order. Defaults to false (alphabetic order or in order of creation).");
             s.RequestParam(x => x.Title, "The toDoTitle of the To Do. Is not case sensitive and supports partial matching. Defaults to null (no filtering).");
@@ -36,7 +36,7 @@ internal class GetToDosFilteredEndpoint : Endpoint<GetToDosFilteredRequest, ToDo
             s.Responses[404] = ToDoResponseExamples.NotFoundResponse;
         });
     }
-    
+
     public override async Task HandleAsync(GetToDosFilteredRequest request, CancellationToken ct)
     {
         if (ValidationFailed)
@@ -44,7 +44,7 @@ internal class GetToDosFilteredEndpoint : Endpoint<GetToDosFilteredRequest, ToDo
             await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
-        
+
         ArgumentNullException.ThrowIfNull(request);
         var isDesc = request.IsDescending ?? false;
 
@@ -57,7 +57,7 @@ internal class GetToDosFilteredEndpoint : Endpoint<GetToDosFilteredRequest, ToDo
             Title: request.Title,
             IsCompleted: request.IsCompleted
         ).ExecuteAsync(ct);
-        
+
         await result.Match(
             dto => SendOkAsync(new(dto.Items.MapToResponse(), dto.HasNextPage, dto.NextPageToken), ct),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

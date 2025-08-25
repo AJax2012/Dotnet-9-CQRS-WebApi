@@ -12,14 +12,14 @@ internal class GetToDoByIdEndpoint : Endpoint<GetToDoByIdRequest, ToDoResource>
     {
         Get("/{id:guid}");
         Group<ToDosGroup>();
-        
+
         Description(x => x
             .Accepts<GetToDoByIdRequest>()
             .Produces<ToDoResource>(StatusCodes.Status200OK, "application/json")
             .ProducesProblemFE()
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithName("GetToDoById"));
-        
+
         Summary(s =>
         {
             s.Summary = "Get a ToDo by id";
@@ -29,7 +29,7 @@ internal class GetToDoByIdEndpoint : Endpoint<GetToDoByIdRequest, ToDoResource>
             s.Responses[404] = ToDoResponseExamples.NotFoundResponse;
         });
     }
-    
+
     public override async Task HandleAsync(GetToDoByIdRequest request, CancellationToken cancellationToken)
     {
         if (ValidationFailed)
@@ -37,11 +37,11 @@ internal class GetToDoByIdEndpoint : Endpoint<GetToDoByIdRequest, ToDoResource>
             await SendResultAsync(ValidationFailures.ToProblemDetailsResult());
             return;
         }
-        
+
         ArgumentNullException.ThrowIfNull(request);
         var result = await new GetToDoByIdQuery(request.Id, request.UserId)
             .ExecuteAsync(cancellationToken);
-        
+
         await result.Match(
             entity => SendOkAsync(entity.MapToResponse(), cancellationToken),
             errors => SendResultAsync(errors.ToProblemDetailsResult()));

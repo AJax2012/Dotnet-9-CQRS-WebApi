@@ -13,7 +13,7 @@ public class UpdateToDoOrderingRequest
     /// Id and display order of to dos to update
     /// </summary>
     public Dictionary<Guid, int> ToDos { get; init; } = new();
-    
+
     /// <summary>
     /// User id from the auth token
     /// </summary>

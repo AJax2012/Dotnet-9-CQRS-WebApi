@@ -9,7 +9,7 @@ namespace SourceName.Infrastructure.Persistence.ToDos;
 public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRepository
 {
     private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
-    
+
     private static string BaseQuery => """
         SELECT id AS Id, 
            created_by_user_id AS CreatedByUserId,
@@ -21,19 +21,19 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         FROM todos
         /**where**/
         """;
-    
+
     public async Task<ToDoEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var query = new SqlBuilder()
             .Where("id = @id", new { id })
             .AddTemplate(BaseQuery);
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
-        
+
         return ToDoDbEntity.ToEntity(dbEntity);
     }
-    
+
     public async Task<IEnumerable<ToDoEntity>> GetFilteredAsync(GetToDosFilteredQuery filter, ToDoEntity? cursor, CancellationToken cancellationToken)
     {
         var builder = new SqlBuilder();
@@ -45,29 +45,29 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
             (string orderBy, dynamic nextPageToken) = GetNextEntityClause(filter.OrderBy, cursor);
             builder.Where(orderBy, nextPageToken);
         }
-        
-        var descendingClause = filter.IsDescending ? "DESC" : "ASC"; 
+
+        var descendingClause = filter.IsDescending ? "DESC" : "ASC";
         builder.OrderBy($"@orderBy {descendingClause}", new { orderBy = filter.OrderBy });
         builder.AddParameters(new { limit = filter.Limit + 1 });
-        
+
         var query = builder.AddTemplate($"""
                                          {BaseQuery} 
                                          /**orderby**/
                                          LIMIT @limit
                                          """);
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         var dbEntities = await connection.QueryAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
         return dbEntities.Select(ToDoDbEntity.ToEntity)!;
     }
-    
+
     public async Task<ToDoEntity?> GetByTitleAsync(string title, Guid createdByUserId, CancellationToken cancellationToken)
     {
         var query = new SqlBuilder()
             .Where("title = @title", new { title })
             .Where("created_by_user_id = @createdByUserId", new { createdByUserId })
             .AddTemplate(BaseQuery);
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
 
@@ -83,22 +83,22 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                             SELECT COUNT(*) FROM todos
                             /**where**/
                             """);
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         return await connection.QuerySingleAsync<int>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
     }
-    
+
     public async Task<int> CreateAsync(ToDoEntity toDo, CancellationToken cancellationToken)
     {
         const string query = """
                              INSERT INTO todos (id, created_by_user_id, title, display_order, is_completed, created_at, updated_at)
                              VALUES (@id, @createdByUserId, @title, @displayOrder, @isCompleted, @createdAt, @updatedAt)
                              """;
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
     }
-    
+
     public async Task<int> UpdateAsync(ToDoEntity toDo, CancellationToken cancellationToken)
     {
         const string query = """
@@ -113,7 +113,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
     }
-    
+
     public async Task<int> UpdateOrderAsync(IReadOnlyList<ToDoEntity> toDos, CancellationToken cancellationToken)
     {
         var values = toDos.Select(toDo => $"('{toDo.Id}', {toDo.Status.DisplayOrder})").ToList();
@@ -132,15 +132,15 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         return await connection.ExecuteAsync(new(sql, cancellationToken: cancellationToken));
     }
-    
+
     public async Task<int> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         const string query = "DELETE FROM todos WHERE id = @id";
-        
+
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
         return await connection.ExecuteAsync(new(query, new { id }, cancellationToken: cancellationToken));
     }
-    
+
     private static void GetFilteredWhereClause(GetToDosFilteredQuery filter, SqlBuilder builder)
     {
         if (filter.IsCompleted.HasValue)
@@ -152,13 +152,13 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         {
             builder.Where("title LIKE @title", new { title = $"%{filter.Title}%" });
         }
-        
+
         if (filter.Ids.Count > 0)
         {
             builder.Where("id = ANY(@ids)", new { ids = filter.Ids });
         }
     }
-    
+
     private static (string orderBy, dynamic nextPageToken) GetNextEntityClause(string orderBy, ToDoEntity cursor) =>
         orderBy switch
         {

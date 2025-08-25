@@ -15,37 +15,37 @@ public class GetToDosFilteredEndpointTests : IClassFixture<ApplicationApiFactory
     public GetToDosFilteredEndpointTests(ApplicationApiFactory factory)
     {
         _client = factory.CreateClient();
-        
+
         var jwtToken = factory.JwtTokenService
             .GenerateJwtToken(TestingIdentity.GenerateClaimsIdentity());
-        
+
         _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwtToken);
     }
-    
+
     [Fact]
     public async Task Returns_200_Ok_WhenToDosFound()
     {
         await _client.PostAsJsonAsync("/api/todos", new CreateToDoRequest { Title = "Test" });
-        
+
         var actual = await _client.GetAsync("/api/todos?title=Test");
         var content = await actual.Content.ReadFromJsonAsync<ToDosResponse>();
-        
+
         await Verify(actual, _verifySettings)
             .ScrubHttpTextResponse(x => x.Replace(content!.NextPageToken, "nextPageToken"));
     }
-    
+
     [Fact]
     public async Task Returns_200_Ok_WhenToDosFoundWithCursor()
     {
         await _client.PostAsJsonAsync("/api/todos", new CreateToDoRequest { Title = "Test" });
-        
+
         var actual = await _client.GetAsync("/api/todos?title=Test&cursor=nextPageToken");
         var content = await actual.Content.ReadFromJsonAsync<ToDosResponse>();
-        
+
         await Verify(actual, _verifySettings)
             .ScrubHttpTextResponse(x => x.Replace(content!.NextPageToken, "nextPageToken"));
     }
-    
+
     [Fact]
     public async Task Returns_404_NotFound_WhenToDosNotFound()
     {
