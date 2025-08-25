@@ -18,6 +18,7 @@ internal static class IdentityConfiguration
         
         services.AddSingleton<JwtTokenService>();
         services.AddTransient<ApplicationJwtBearerEvents>();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
         services.AddFastEndpointsAuthentication();
         services.AddAuthorization();
         
@@ -30,7 +31,6 @@ internal static class IdentityConfiguration
             .BuildServiceProvider()
             .GetRequiredService<JwtTokenService>();
         
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
         services.AddAuthenticationJwtBearer(
             s => s.SigningKey = tokenService.GetSigningKey(),
             b =>
