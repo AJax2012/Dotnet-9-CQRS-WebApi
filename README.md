@@ -36,8 +36,9 @@ Dotnet new template for Dotnet 9 CQRS WebApi with the following features:
    * Feel free to add more claims or add a name to the JWT as well. All requests require the nameid to be present though.
    * This creates a user-secrets id and updates the appsettings.Development.json file with data related to your JWT information.
    * Use the output token to make requests in the provided Scalar GUI or your favorite API testing client.
-7. Open the project in your preferred IDE
+7. Open the solution in your preferred IDE
 8. Ensure you are using the Aspire https run configuration
+   * Alternatively, you can run `dotnet run --project infra/AppHost` from the solution root directory.
 
 If you include the example project, everything should work as expected. 
 You will see the Aspire dashboard open on your browser with the following:
