@@ -1,5 +1,6 @@
-using Serilog;
-
+using MELT;
+using MELT.Xunit;
+using Microsoft.Extensions.Logging;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
@@ -11,12 +12,14 @@ namespace SourceName.Test.Application.ToDos.Queries;
 public class GetToDoByIdQueryHandlerTest
 {
     private readonly IToDosRepository _toDoRepository = Substitute.For<IToDosRepository>();
-    private readonly ILogger _logger = Substitute.For<ILogger>();
+    private readonly ITestLoggerFactory _loggerFactory = TestLoggerFactory.Create();
+    private readonly ILogger<GetToDoByIdQueryHandler> _logger;
     private readonly GetToDoByIdQueryHandler _sut;
 
     public GetToDoByIdQueryHandlerTest()
     {
-        _sut = new GetToDoByIdQueryHandler(_toDoRepository, _logger);
+        _logger = _loggerFactory.CreateLogger<GetToDoByIdQueryHandler>();
+        _sut = new GetToDoByIdQueryHandler(_toDoRepository, _loggerFactory);
     }
 
     [Fact]
@@ -41,8 +44,10 @@ public class GetToDoByIdQueryHandlerTest
         var request = GetToDoByIdQueryFaker.Faker.Generate();
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
 
-        _logger.Received()
-            .Warning("Todo with id {Id} not found", request.Id);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("Todo with id {Id} not found", log.OriginalFormat);
+        LoggingAssert.Contains("Id", request.Id, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
@@ -59,11 +64,11 @@ public class GetToDoByIdQueryHandlerTest
 
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
 
-        _logger.Received()
-            .Warning(
-                "Todo with id {Id} does not belong to user {UserId}",
-                request.Id,
-                request.UserId);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("Todo with id {Id} does not belong to user {UserId}", log.OriginalFormat);
+        LoggingAssert.Contains("Id", request.Id, log.Properties);
+        LoggingAssert.Contains("UserId", request.UserId, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);

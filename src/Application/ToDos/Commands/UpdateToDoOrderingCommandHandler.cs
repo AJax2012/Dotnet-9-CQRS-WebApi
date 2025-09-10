@@ -4,7 +4,7 @@ using ErrorOr;
 
 using FastEndpoints;
 
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Queries;
@@ -15,11 +15,11 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record UpdateToDoOrderingCommand(Dictionary<Guid, int> ToDos, Guid UserId) : ICommand<ErrorOr<Success>>;
 
-public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, ILogger logger)
+public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, ILoggerFactory logger)
     : ICommandHandler<UpdateToDoOrderingCommand, ErrorOr<Success>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<UpdateToDoOrderingCommandHandler>();
 
     public async Task<ErrorOr<Success>> ExecuteAsync(UpdateToDoOrderingCommand request, CancellationToken ct)
     {
@@ -37,13 +37,13 @@ public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, 
 
         if (toDos.IsEmpty)
         {
-            _logger.Warning("No ToDos found");
+            _logger.LogWarning("No ToDos found");
             return ToDoErrors.NotFound;
         }
 
         if (toDos.Any(x => x.CreatedByUserId != request.UserId))
         {
-            _logger.Warning("Not all ToDos belong to user {UserId}", request.UserId);
+            _logger.LogWarning("Not all ToDos belong to user {UserId}", request.UserId);
             return ToDoErrors.NotFound;
         }
 
@@ -57,7 +57,7 @@ public class UpdateToDoOrderingCommandHandler(IToDosRepository toDosRepository, 
 
         if (rowsUpdated < 1)
         {
-            _logger.Error("Failed to update order");
+            _logger.LogError("Failed to update order");
             return ToDoErrors.SqlError;
         }
 

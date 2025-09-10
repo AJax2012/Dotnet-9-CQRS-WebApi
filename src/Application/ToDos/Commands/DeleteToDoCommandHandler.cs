@@ -2,7 +2,7 @@ using ErrorOr;
 
 using FastEndpoints;
 
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Domain.ToDos;
@@ -11,11 +11,11 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record DeleteToDoCommand(Guid Id, Guid UserId) : ICommand<ErrorOr<Success>>;
 
-public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILogger logger)
+public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILoggerFactory logger)
     : ICommandHandler<DeleteToDoCommand, ErrorOr<Success>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<DeleteToDoCommandHandler>();
 
     public async Task<ErrorOr<Success>> ExecuteAsync(DeleteToDoCommand request, CancellationToken ct)
     {
@@ -24,13 +24,13 @@ public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILogger 
 
         if (todo is null)
         {
-            _logger.Warning("Todo with id {Id} not found", request.Id);
+            _logger.LogWarning("Todo with id {Id} not found", request.Id);
             return ToDoErrors.NotFound;
         }
 
         if (todo.CreatedByUserId != request.UserId)
         {
-            _logger.Warning("Todo with id {Id} does not belong to user {UserId}", request.Id, request.UserId);
+            _logger.LogWarning("Todo with id {Id} does not belong to user {UserId}", request.Id, request.UserId);
             return ToDoErrors.NotFound;
         }
 
@@ -38,7 +38,7 @@ public class DeleteToDoCommandHandler(IToDosRepository toDosRepository, ILogger 
 
         if (rowsAffected < 1)
         {
-            _logger.Error("Failed to delete todo with id {Id}", request.Id);
+            _logger.LogError("Failed to delete todo with id {Id}", request.Id);
             return ToDoErrors.SqlError;
         }
 

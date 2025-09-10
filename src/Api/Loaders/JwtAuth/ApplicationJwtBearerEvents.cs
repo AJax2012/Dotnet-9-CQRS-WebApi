@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-using ILogger = Serilog.ILogger;
-
 namespace SourceName.Api.Loaders.JwtAuth;
 
 /// <inheritdoc />
-public class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
+public class ApplicationJwtBearerEvents(ILoggerFactory logger) : JwtBearerEvents
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<ApplicationJwtBearerEvents>();
 
     /// <inheritdoc />
     public override Task AuthenticationFailed(AuthenticationFailedContext context)
@@ -19,7 +17,7 @@ public class ApplicationJwtBearerEvents(ILogger logger) : JwtBearerEvents
             return Task.CompletedTask;
         }
 
-        _logger.Error(context.Exception, "JWT Token Error");
+        _logger.LogError(context.Exception, "JWT Token Error");
         context.Response.Headers.Append("Token-Error", "invalid token");
 
         return Task.CompletedTask;

@@ -1,6 +1,5 @@
 using FastEndpoints;
 
-using ILogger = Serilog.ILogger;
 using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace SourceName.Api.ErrorHandling;
@@ -8,10 +7,10 @@ namespace SourceName.Api.ErrorHandling;
 /// <summary>
 /// When an unhandled exception occurs, this processor will be called to handle it and return a problem details response.
 /// </summary>
-internal sealed class GlobalExceptionProcessor(ILogger logger)
+internal sealed class GlobalExceptionProcessor(ILoggerFactory logger)
     : IGlobalPostProcessor
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<GlobalExceptionProcessor>();
 
     public async Task PostProcessAsync(IPostProcessorContext context, CancellationToken cancellationToken)
     {
@@ -23,7 +22,7 @@ internal sealed class GlobalExceptionProcessor(ILogger logger)
         var exception = context.ExceptionDispatchInfo!.SourceException;
         var httpContext = context.HttpContext;
 
-        _logger.Error(exception, "An unhandled exception occured");
+        _logger.LogError(exception, "An unhandled exception occured");
 
         var problemDetails = new ProblemDetails
         {

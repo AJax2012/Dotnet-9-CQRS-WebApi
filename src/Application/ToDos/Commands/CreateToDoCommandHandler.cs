@@ -2,7 +2,7 @@ using ErrorOr;
 
 using FastEndpoints;
 
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Queries;
@@ -13,11 +13,11 @@ namespace SourceName.Application.ToDos.Commands;
 
 public record CreateToDoCommand(Guid UserId, string Title) : ICommand<ErrorOr<Guid>>;
 
-public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger logger)
+public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILoggerFactory logger)
     : ICommandHandler<CreateToDoCommand, ErrorOr<Guid>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<CreateToDoCommandHandler>();
 
     public async Task<ErrorOr<Guid>> ExecuteAsync(CreateToDoCommand request, CancellationToken ct)
     {
@@ -27,7 +27,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger l
 
         if (existingToDo is not null)
         {
-            _logger.Information("ToDo with toDoTitle {Title} already exists for user {UserId}", request.Title, request.UserId);
+            _logger.LogInformation("ToDo with toDoTitle {Title} already exists for user {UserId}", request.Title, request.UserId);
             return ToDoErrors.Conflict;
         }
 
@@ -47,7 +47,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILogger l
 
         if (rowsAffected < 1)
         {
-            _logger.Error("Failed to create ToDo for user {UserId}", request.UserId);
+            _logger.LogError("Failed to create ToDo for user {UserId}", request.UserId);
             return ToDoErrors.SqlError;
         }
 

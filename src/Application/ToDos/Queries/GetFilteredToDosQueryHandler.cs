@@ -4,7 +4,7 @@ using ErrorOr;
 
 using FastEndpoints;
 
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
@@ -21,11 +21,11 @@ public record GetToDosFilteredQuery(
     string? Title = null,
     bool? IsCompleted = null) : ICommand<ErrorOr<Models.ToDos>>;
 
-public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogger logger)
+public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILoggerFactory logger)
     : ICommandHandler<GetToDosFilteredQuery, ErrorOr<Models.ToDos>>
 {
     private readonly IToDosRepository _toDoRepository = toDoRepository;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<GetFilteredToDosQueryHandler>();
 
     public async Task<ErrorOr<Models.ToDos>> ExecuteAsync(GetToDosFilteredQuery request, CancellationToken ct)
     {
@@ -37,7 +37,7 @@ public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogg
 
         if (filteredToDos.IsEmpty)
         {
-            _logger.Debug("No ToDos found");
+            _logger.LogInformation("No ToDos found");
             return ToDoErrors.NotFound;
         }
 

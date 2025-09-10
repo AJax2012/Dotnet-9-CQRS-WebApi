@@ -1,7 +1,7 @@
 using ErrorOr;
-
-using Serilog;
-
+using MELT;
+using MELT.Xunit;
+using Microsoft.Extensions.Logging;
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Queries;
@@ -14,12 +14,14 @@ namespace SourceName.Test.Application.ToDos.Commands;
 public class UpdateToDoOrderingCommandHandlerTest
 {
     private readonly IToDosRepository _toDoRepository = Substitute.For<IToDosRepository>();
-    private readonly ILogger _logger = Substitute.For<ILogger>();
+    private readonly ITestLoggerFactory _loggerFactory = TestLoggerFactory.Create();
+    private readonly ILogger<UpdateToDoOrderingCommandHandler> _logger;
     private readonly UpdateToDoOrderingCommandHandler _sut;
 
     public UpdateToDoOrderingCommandHandlerTest()
     {
-        _sut = new(_toDoRepository, _logger);
+        _logger = _loggerFactory.CreateLogger<UpdateToDoOrderingCommandHandler>();
+        _sut = new(_toDoRepository, _loggerFactory);
     }
 
     [Fact]
@@ -48,8 +50,9 @@ public class UpdateToDoOrderingCommandHandlerTest
     {
         var actual = await _sut.ExecuteAsync(new([], Guid.NewGuid()), CancellationToken.None);
 
-        _logger.Received()
-            .Warning("No ToDos found");
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("No ToDos found", log.Message);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
@@ -66,8 +69,10 @@ public class UpdateToDoOrderingCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(new([], requestUserId), CancellationToken.None);
 
-        _logger.Received()
-            .Warning("Not all ToDos belong to user {UserId}", requestUserId);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("Not all ToDos belong to user {UserId}", log.OriginalFormat);
+        LoggingAssert.Contains("UserId", requestUserId, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
@@ -117,8 +122,9 @@ public class UpdateToDoOrderingCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
 
-        _logger.Received()
-            .Error("Failed to update order");
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Error, log.LogLevel);
+        Assert.Equal("Failed to update order", log.OriginalFormat);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.SqlError, actual.FirstError);

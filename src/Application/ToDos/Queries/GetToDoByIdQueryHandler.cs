@@ -2,7 +2,7 @@ using ErrorOr;
 
 using FastEndpoints;
 
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
@@ -12,11 +12,11 @@ namespace SourceName.Application.ToDos.Queries;
 
 public record GetToDoByIdQuery(Guid Id, Guid UserId) : ICommand<ErrorOr<ToDo>>;
 
-public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger logger)
+public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILoggerFactory logger)
     : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDo>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
-    private readonly ILogger _logger = logger;
+    private readonly ILogger _logger = logger.CreateLogger<GetToDoByIdQueryHandler>();
 
     public async Task<ErrorOr<ToDo>> ExecuteAsync(GetToDoByIdQuery request, CancellationToken ct)
     {
@@ -25,13 +25,13 @@ public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILogger l
 
         if (toDo is null)
         {
-            _logger.Warning("Todo with id {Id} not found", request.Id);
+            _logger.LogWarning("Todo with id {Id} not found", request.Id);
             return ToDoErrors.NotFound;
         }
 
         if (toDo.CreatedByUserId != request.UserId)
         {
-            _logger.Warning("Todo with id {Id} does not belong to user {UserId}", request.Id, request.UserId);
+            _logger.LogWarning("Todo with id {Id} does not belong to user {UserId}", request.Id, request.UserId);
             return ToDoErrors.NotFound;
         }
 

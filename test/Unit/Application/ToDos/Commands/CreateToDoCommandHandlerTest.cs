@@ -1,4 +1,7 @@
-using Serilog;
+using MELT;
+using MELT.Xunit;
+
+using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
@@ -12,13 +15,15 @@ namespace SourceName.Test.Application.ToDos.Commands;
 public class CreateToDoCommandHandlerTest
 {
     private readonly IToDosRepository _toDoRepository = Substitute.For<IToDosRepository>();
-    private readonly ILogger _logger = Substitute.For<ILogger>();
+    private readonly ITestLoggerFactory _loggerFactory = TestLoggerFactory.Create();
+    private readonly ILogger<CreateToDoCommandHandler> _logger;
     private readonly CreateToDoCommand _createToDoCommand = CreateToDoCommandFaker.Generate();
     private readonly CreateToDoCommandHandler _sut;
 
     public CreateToDoCommandHandlerTest()
     {
-        _sut = new(_toDoRepository, _logger);
+        _logger = _loggerFactory.CreateLogger<CreateToDoCommandHandler>();
+        _sut = new(_toDoRepository, _loggerFactory);
     }
 
     [Fact]
@@ -47,11 +52,11 @@ public class CreateToDoCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);
 
-        _logger.Received()
-            .Information(
-                "ToDo with toDoTitle {Title} already exists for user {UserId}",
-                _createToDoCommand.Title,
-                _createToDoCommand.UserId);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Information, log.LogLevel);
+        Assert.Equal("ToDo with toDoTitle {Title} already exists for user {UserId}", log.OriginalFormat);
+        LoggingAssert.Contains("Title", _createToDoCommand.Title, log.Properties);
+        LoggingAssert.Contains("UserId", _createToDoCommand.UserId, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.Conflict, actual.FirstError);
@@ -98,8 +103,10 @@ public class CreateToDoCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);
 
-        _logger.Received()
-            .Error("Failed to create ToDo for user {UserId}", _createToDoCommand.UserId);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Error, log.LogLevel);
+        Assert.Equal("Failed to create ToDo for user {UserId}", log.OriginalFormat);
+        LoggingAssert.Contains("UserId", _createToDoCommand.UserId, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.SqlError, actual.FirstError);

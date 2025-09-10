@@ -1,5 +1,6 @@
-using Serilog;
-
+using MELT;
+using MELT.Xunit;
+using Microsoft.Extensions.Logging;
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
@@ -11,12 +12,14 @@ namespace SourceName.Test.Application.ToDos.Commands;
 public class UpdateToDoCommandHandlerTest
 {
     private readonly IToDosRepository _toDoRepository = Substitute.For<IToDosRepository>();
-    private readonly ILogger _logger = Substitute.For<ILogger>();
+    private readonly ITestLoggerFactory _loggerFactory = TestLoggerFactory.Create();
+    private readonly ILogger<UpdateToDoCommandHandler> _logger;
     private readonly UpdateToDoCommandHandler _sut;
 
     public UpdateToDoCommandHandlerTest()
     {
-        _sut = new UpdateToDoCommandHandler(_toDoRepository, _logger);
+        _logger = _loggerFactory.CreateLogger<UpdateToDoCommandHandler>();
+        _sut = new UpdateToDoCommandHandler(_toDoRepository, _loggerFactory);
     }
 
     [Fact]
@@ -41,8 +44,10 @@ public class UpdateToDoCommandHandlerTest
         var command = UpdateToDoCommandFaker.Faker.Generate();
         var actual = await _sut.ExecuteAsync(command, CancellationToken.None);
 
-        _logger.Received()
-            .Warning("Todo with id {Id} not found", command.Id);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("Todo with id {Id} not found", log.OriginalFormat);
+        LoggingAssert.Contains("Id", command.Id, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
@@ -59,11 +64,11 @@ public class UpdateToDoCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(command, CancellationToken.None);
 
-        _logger.Received()
-            .Warning(
-                "Todo with id {Id} does not belong to user {UserId}",
-                command.Id,
-                command.UserId);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Warning, log.LogLevel);
+        Assert.Equal("Todo with id {Id} does not belong to user {UserId}", log.OriginalFormat);
+        LoggingAssert.Contains("Id", command.Id, log.Properties);
+        LoggingAssert.Contains("UserId", command.UserId, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
@@ -109,8 +114,10 @@ public class UpdateToDoCommandHandlerTest
 
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
 
-        _logger.Received()
-            .Error("Failed to update todo with id {Id}", request.Id);
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Error, log.LogLevel);
+        Assert.Equal("Failed to update todo with id {Id}", log.OriginalFormat);
+        LoggingAssert.Contains("Id", request.Id, log.Properties);
 
         Assert.Single(actual.Errors);
         Assert.Equal(ToDoErrors.SqlError, actual.FirstError);

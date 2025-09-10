@@ -1,5 +1,6 @@
-using Serilog;
-
+using MELT;
+using MELT.Xunit;
+using Microsoft.Extensions.Logging;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
@@ -11,12 +12,14 @@ namespace SourceName.Test.Application.ToDos.Queries;
 public class GetFilteredToDosQueryHandlerTest
 {
     private readonly IToDosRepository _toDoRepository = Substitute.For<IToDosRepository>();
-    private readonly ILogger _logger = Substitute.For<ILogger>();
+    private readonly ITestLoggerFactory _loggerFactory = TestLoggerFactory.Create();
+    private readonly ILogger<GetFilteredToDosQueryHandler> _logger;
     private readonly GetFilteredToDosQueryHandler _sut;
 
     public GetFilteredToDosQueryHandlerTest()
     {
-        _sut = new(_toDoRepository, _logger);
+        _logger = _loggerFactory.CreateLogger<GetFilteredToDosQueryHandler>();
+        _sut = new(_toDoRepository, _loggerFactory);
     }
 
     [Fact]
@@ -74,8 +77,9 @@ public class GetFilteredToDosQueryHandlerTest
     {
         var actual = await _sut.ExecuteAsync(GetToDosFilteredQueryFaker.Faker.Generate(), CancellationToken.None);
 
-        _logger.Received()
-            .Debug("No ToDos found");
+        var log = Assert.Single(_loggerFactory.Sink.LogEntries);
+        Assert.Equal(LogLevel.Information, log.LogLevel);
+        Assert.Equal("No ToDos found", log.Message);
 
         Assert.Single(actual.ErrorsOrEmptyList);
         Assert.Equal(ToDoErrors.NotFound, actual.FirstError);
