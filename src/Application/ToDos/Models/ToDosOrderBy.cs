@@ -1,6 +1,6 @@
 using NetEscapades.EnumGenerators;
 
-namespace SourceName.Contracts.ToDos;
+namespace SourceName.Application.ToDos.Models;
 
 [EnumExtensions]
 public enum ToDosOrderBy

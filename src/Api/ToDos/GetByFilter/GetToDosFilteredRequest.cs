@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 using FastEndpoints;
 
-using SourceName.Contracts.ToDos;
+using SourceName.Application.ToDos.Models;
 
 namespace SourceName.Api.ToDos.GetByFilter;
 

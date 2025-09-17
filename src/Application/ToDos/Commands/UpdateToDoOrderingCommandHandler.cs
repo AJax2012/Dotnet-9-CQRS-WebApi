@@ -7,8 +7,8 @@ using FastEndpoints;
 using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
+using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
-using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 
 namespace SourceName.Application.ToDos.Commands;

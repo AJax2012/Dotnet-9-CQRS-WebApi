@@ -2,7 +2,7 @@ using FastEndpoints;
 
 using FluentValidation;
 
-using SourceName.Contracts.ToDos;
+using SourceName.Application.ToDos.Models;
 
 namespace SourceName.Api.ToDos.GetByFilter;
 

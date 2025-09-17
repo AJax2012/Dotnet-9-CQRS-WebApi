@@ -4,7 +4,7 @@ using SourceName.Api.ToDos.GetByFilter;
 using SourceName.Api.ToDos.GetById;
 using SourceName.Api.ToDos.Update;
 using SourceName.Api.ToDos.UpdateOrder;
-using SourceName.Contracts.ToDos;
+using SourceName.Application.ToDos.Models;
 
 namespace SourceName.Api.ToDos.ExampleResponses;
 
