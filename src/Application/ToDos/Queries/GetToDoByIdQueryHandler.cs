@@ -10,15 +10,15 @@ using SourceName.Domain.ToDos;
 
 namespace SourceName.Application.ToDos.Queries;
 
-public record GetToDoByIdQuery(Guid Id, Guid UserId) : ICommand<ErrorOr<ToDo>>;
+public record GetToDoByIdQuery(Guid Id, Guid UserId) : ICommand<ErrorOr<ToDoDto>>;
 
 public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILoggerFactory logger)
-    : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDo>>
+    : ICommandHandler<GetToDoByIdQuery, ErrorOr<ToDoDto>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger.CreateLogger<GetToDoByIdQueryHandler>();
 
-    public async Task<ErrorOr<ToDo>> ExecuteAsync(GetToDoByIdQuery request, CancellationToken ct)
+    public async Task<ErrorOr<ToDoDto>> ExecuteAsync(GetToDoByIdQuery request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         var toDo = await _toDosRepository.GetByIdAsync(request.Id, ct);
@@ -35,6 +35,6 @@ public class GetToDoByIdQueryHandler(IToDosRepository toDosRepository, ILoggerFa
             return ToDoErrors.NotFound;
         }
 
-        return toDo.MapFromEntity();
+        return toDo.MapFromDomainModel();
     }
 }

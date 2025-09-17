@@ -1,6 +1,7 @@
 using MELT;
-using MELT.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
@@ -51,7 +52,7 @@ public class GetFilteredToDosQueryHandlerTest
     [Fact]
     public async Task ExecuteAsync_CallsGetFilteredAsync_WithCursor_WhenRequestHasCursor()
     {
-        var cursorEntity = ToDoEntityFaker.Generate().First();
+        var cursorEntity = ToDoFaker.Generate().First();
         var request = GetToDosFilteredQueryFaker.GenerateWithNextPageToken(cursorEntity);
         await _sut.ExecuteAsync(request, CancellationToken.None);
 
@@ -65,7 +66,7 @@ public class GetFilteredToDosQueryHandlerTest
                     x.Title == request.Title &&
                     x.IsCompleted == request.IsCompleted
                 ),
-                Arg.Is<ToDoEntity>(x =>
+                Arg.Is<ToDo>(x =>
                     x.Id == cursorEntity.Id &&
                     x.Status.DisplayOrder == cursorEntity.Status.DisplayOrder &&
                     x.Title.Value == cursorEntity.Title.Value),
@@ -92,25 +93,25 @@ public class GetFilteredToDosQueryHandlerTest
     {
         var request = GetToDosFilteredQueryFaker.Faker.Generate();
         var numberToGenerate = hasNextPage ? request.Limit!.Value + 1 : request.Limit!.Value;
-        var toDos = ToDoEntityFaker.Generate(numberToGenerate);
+        var toDos = ToDoFaker.Generate(numberToGenerate);
         var expectedNextPageToken = ToDoNextResultToken.EncodeToken(toDos.Last());
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
 
-        var expected = new List<ToDo>();
+        var expected = new List<SourceName.Application.ToDos.Models.ToDoDto>();
 
         if (hasNextPage)
         {
             expected.AddRange(
                 toDos
                     .Take(request.Limit!.Value)
-                    .Select(x => x.MapFromEntity()));
+                    .Select(x => x.MapFromDomainModel()));
         }
         else
         {
             expected.AddRange(toDos.Select(x =>
-                x.MapFromEntity()));
+                x.MapFromDomainModel()));
         }
 
         var actual = await _sut.ExecuteAsync(GetToDosFilteredQueryFaker.Faker.Generate(), CancellationToken.None);

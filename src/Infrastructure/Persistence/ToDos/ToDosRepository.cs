@@ -22,19 +22,19 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         /**where**/
         """;
 
-    public async Task<ToDoEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ToDo?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var query = new SqlBuilder()
             .Where("id = @id", new { id })
             .AddTemplate(BaseQuery);
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
+        var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
 
-        return ToDoDbEntity.ToEntity(dbEntity);
+        return ToDoEntity.ToDomainModel(dbEntity);
     }
 
-    public async Task<IEnumerable<ToDoEntity>> GetFilteredAsync(GetToDosFilteredQuery filter, ToDoEntity? cursor, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ToDo>> GetFilteredAsync(GetToDosFilteredQuery filter, ToDo? cursor, CancellationToken cancellationToken)
     {
         var builder = new SqlBuilder();
 
@@ -57,11 +57,11 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                                          """);
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        var dbEntities = await connection.QueryAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
-        return dbEntities.Select(ToDoDbEntity.ToEntity)!;
+        var dbEntities = await connection.QueryAsync<ToDoEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
+        return dbEntities.Select(ToDoEntity.ToDomainModel)!;
     }
 
-    public async Task<ToDoEntity?> GetByTitleAsync(string title, Guid createdByUserId, CancellationToken cancellationToken)
+    public async Task<ToDo?> GetByTitleAsync(string title, Guid createdByUserId, CancellationToken cancellationToken)
     {
         var query = new SqlBuilder()
             .Where("title = @title", new { title })
@@ -69,9 +69,9 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
             .AddTemplate(BaseQuery);
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoDbEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
+        var dbEntity = await connection.QuerySingleOrDefaultAsync<ToDoEntity>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
 
-        return ToDoDbEntity.ToEntity(dbEntity);
+        return ToDoEntity.ToDomainModel(dbEntity);
     }
 
     public async Task<int> GetCountAsync(GetToDosFilteredQuery filter, CancellationToken cancellationToken)
@@ -88,7 +88,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         return await connection.QuerySingleAsync<int>(new(query.RawSql, query.Parameters, cancellationToken: cancellationToken));
     }
 
-    public async Task<int> CreateAsync(ToDoEntity toDo, CancellationToken cancellationToken)
+    public async Task<int> CreateAsync(ToDo toDo, CancellationToken cancellationToken)
     {
         const string query = """
                              INSERT INTO todos (id, created_by_user_id, title, display_order, is_completed, created_at, updated_at)
@@ -96,10 +96,10 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                              """;
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
+        return await connection.ExecuteAsync(new(query, new ToDoEntity(toDo), cancellationToken: cancellationToken));
     }
 
-    public async Task<int> UpdateAsync(ToDoEntity toDo, CancellationToken cancellationToken)
+    public async Task<int> UpdateAsync(ToDo toDo, CancellationToken cancellationToken)
     {
         const string query = """
                              UPDATE todos
@@ -111,10 +111,10 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
                              """;
 
         using var connection = await _connectionFactory.CreateConnection(cancellationToken);
-        return await connection.ExecuteAsync(new(query, new ToDoDbEntity(toDo), cancellationToken: cancellationToken));
+        return await connection.ExecuteAsync(new(query, new ToDoEntity(toDo), cancellationToken: cancellationToken));
     }
 
-    public async Task<int> UpdateOrderAsync(IReadOnlyList<ToDoEntity> toDos, CancellationToken cancellationToken)
+    public async Task<int> UpdateOrderAsync(IReadOnlyList<ToDo> toDos, CancellationToken cancellationToken)
     {
         var values = toDos.Select(toDo => $"('{toDo.Id}', {toDo.Status.DisplayOrder})").ToList();
 
@@ -159,7 +159,7 @@ public class ToDosRepository(IDbConnectionFactory connectionFactory) : IToDosRep
         }
     }
 
-    private static (string orderBy, dynamic nextPageToken) GetNextEntityClause(string orderBy, ToDoEntity cursor) =>
+    private static (string orderBy, dynamic nextPageToken) GetNextEntityClause(string orderBy, ToDo cursor) =>
         orderBy switch
         {
             "DisplayOrder" => ("display_order > @nextPageToken", new { nextPageToken = cursor.Status.DisplayOrder }),

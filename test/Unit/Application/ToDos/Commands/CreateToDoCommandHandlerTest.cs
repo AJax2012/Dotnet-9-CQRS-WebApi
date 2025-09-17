@@ -1,12 +1,11 @@
 using MELT;
-using MELT.Xunit;
 
 using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
+using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
-using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 using SourceName.TestUtils.ToDos;
 
@@ -48,7 +47,7 @@ public class CreateToDoCommandHandlerTest
     public async Task ExecuteAsync_LogsAndReturnsConflict_WhenToDoAlreadyExists()
     {
         _toDoRepository.GetByTitleAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
-            .Returns(ToDoEntityFaker.Generate().First());
+            .Returns(ToDoFaker.Generate().First());
 
         var actual = await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);
 
@@ -88,7 +87,7 @@ public class CreateToDoCommandHandlerTest
         await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);
 
         await _toDoRepository.Received()
-            .CreateAsync(Arg.Is<ToDoEntity>(x =>
+            .CreateAsync(Arg.Is<ToDo>(x =>
                     x.CreatedByUserId == _createToDoCommand.UserId &&
                     x.Title.Value == _createToDoCommand.Title &&
                     x.Status.DisplayOrder == 1),
@@ -98,7 +97,7 @@ public class CreateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsSqlError_WhenCreateAsyncFails()
     {
-        _toDoRepository.CreateAsync(Arg.Any<ToDoEntity>(), Arg.Any<CancellationToken>())
+        _toDoRepository.CreateAsync(Arg.Any<ToDo>(), Arg.Any<CancellationToken>())
             .Returns(0);
 
         var actual = await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);
@@ -115,7 +114,7 @@ public class CreateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_ReturnsToDoId_WhenCreateAsyncSucceeds()
     {
-        _toDoRepository.CreateAsync(Arg.Any<ToDoEntity>(), Arg.Any<CancellationToken>())
+        _toDoRepository.CreateAsync(Arg.Any<ToDo>(), Arg.Any<CancellationToken>())
             .Returns(1);
 
         var actual = await _sut.ExecuteAsync(_createToDoCommand, CancellationToken.None);

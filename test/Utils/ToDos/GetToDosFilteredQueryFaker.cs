@@ -1,6 +1,5 @@
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
-using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 
 namespace SourceName.TestUtils.ToDos;
@@ -16,7 +15,7 @@ public static class GetToDosFilteredQueryFaker
         .RuleFor(x => x.Title, f => f.Random.Words())
         .RuleFor(x => x.IsCompleted, f => f.Random.Bool());
 
-    public static GetToDosFilteredQuery GenerateWithNextPageToken(ToDoEntity cursor)
+    public static GetToDosFilteredQuery GenerateWithNextPageToken(ToDo cursor)
     {
         var cursorToken = ToDoNextResultToken.EncodeToken(cursor);
 

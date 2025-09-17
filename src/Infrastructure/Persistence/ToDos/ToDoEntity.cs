@@ -3,12 +3,12 @@ using SourceName.Domain.ToDos;
 
 namespace SourceName.Infrastructure.Persistence.ToDos;
 
-public class ToDoDbEntity
+public class ToDoEntity
 {
     // For Dapper
-    public ToDoDbEntity() { }
+    public ToDoEntity() { }
 
-    public ToDoDbEntity(ToDoEntity toDo)
+    public ToDoEntity(ToDo toDo)
     {
         Id = toDo.Id;
         CreatedByUserId = toDo.CreatedByUserId;
@@ -19,7 +19,7 @@ public class ToDoDbEntity
         UpdatedAt = toDo.UpdatedAt;
     }
 
-    internal static ToDoEntity? ToEntity(ToDoDbEntity? dbEntity)
+    internal static ToDo? ToDomainModel(ToDoEntity? dbEntity)
     {
         if (dbEntity is null)
         {

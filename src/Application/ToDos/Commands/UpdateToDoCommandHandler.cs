@@ -10,15 +10,15 @@ using SourceName.Domain.ToDos;
 
 namespace SourceName.Application.ToDos.Commands;
 
-public record UpdateToDoCommand(Guid Id, Guid UserId, string Title, bool IsCompleted) : ICommand<ErrorOr<ToDo>>;
+public record UpdateToDoCommand(Guid Id, Guid UserId, string Title, bool IsCompleted) : ICommand<ErrorOr<ToDoDto>>;
 
 public class UpdateToDoCommandHandler(IToDosRepository toDosRepository, ILoggerFactory logger)
-    : ICommandHandler<UpdateToDoCommand, ErrorOr<ToDo>>
+    : ICommandHandler<UpdateToDoCommand, ErrorOr<ToDoDto>>
 {
     private readonly IToDosRepository _toDosRepository = toDosRepository;
     private readonly ILogger _logger = logger.CreateLogger<UpdateToDoCommandHandler>();
 
-    public async Task<ErrorOr<ToDo>> ExecuteAsync(UpdateToDoCommand request, CancellationToken ct)
+    public async Task<ErrorOr<ToDoDto>> ExecuteAsync(UpdateToDoCommand request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         var todo = await _toDosRepository.GetByIdAsync(request.Id, ct);
@@ -44,6 +44,6 @@ public class UpdateToDoCommandHandler(IToDosRepository toDosRepository, ILoggerF
             return ToDoErrors.SqlError;
         }
 
-        return todo.MapFromEntity();
+        return todo.MapFromDomainModel();
     }
 }

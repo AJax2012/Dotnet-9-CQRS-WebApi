@@ -4,13 +4,13 @@ using SourceName.Domain.BaseEntity;
 
 namespace SourceName.Domain.ToDos;
 
-public class ToDoEntity : AuditableGuidEntity
+public class ToDo : AuditableGuidEntity
 {
     public Guid CreatedByUserId { get; }
     public ToDoTitle Title { get; private set; }
     public ToDoStatus Status { get; private set; }
 
-    public ToDoEntity(
+    public ToDo(
         Guid createdByUserid,
         ToDoTitle title,
         int displayOrder) : base()
@@ -21,7 +21,7 @@ public class ToDoEntity : AuditableGuidEntity
     }
 
     [JsonConstructor]
-    public ToDoEntity(
+    public ToDo(
         Guid id,
         Guid createdByUserid,
         ToDoTitle title,

@@ -1,11 +1,13 @@
 using ErrorOr;
+
 using MELT;
-using MELT.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
+using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
-using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 using SourceName.TestUtils.ToDos;
 
@@ -62,7 +64,7 @@ public class UpdateToDoOrderingCommandHandlerTest
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoExistsButUserIdDoesNotMatch()
     {
         var requestUserId = Guid.NewGuid();
-        var toDos = ToDoEntityFaker.Generate(5);
+        var toDos = ToDoFaker.Generate(5);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
@@ -81,7 +83,7 @@ public class UpdateToDoOrderingCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_CallsUpdateAsync_WhenToDoExistsAndUserIdMatches()
     {
-        var toDos = ToDoEntityFaker.Generate(5);
+        var toDos = ToDoFaker.Generate(5);
         var requestDictionary = new Dictionary<Guid, int>();
 
         toDos.Reverse();
@@ -94,13 +96,13 @@ public class UpdateToDoOrderingCommandHandlerTest
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
 
-        await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
+        await _sut.ExecuteAsync(new(requestDictionary, ToDoFaker.EntityCreatedByUserId), CancellationToken.None);
 
         foreach (var toDo in toDos)
         {
             toDo.UpdateOrder(requestDictionary[toDo.Id]);
             await _toDoRepository.Received()
-                .UpdateOrderAsync(Arg.Is<IReadOnlyList<ToDoEntity>>(x =>
+                .UpdateOrderAsync(Arg.Is<IReadOnlyList<ToDo>>(x =>
                         x.Count == toDos.Count &&
                         x.Contains(toDo)
                     ), CancellationToken.None);
@@ -110,17 +112,17 @@ public class UpdateToDoOrderingCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsSqlError_WhenUpdateAsyncFails()
     {
-        var toDos = ToDoEntityFaker.Generate(5);
+        var toDos = ToDoFaker.Generate(5);
 
         var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
 
-        _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDoEntity>>(), Arg.Any<CancellationToken>())
+        _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDo>>(), Arg.Any<CancellationToken>())
             .Returns(0);
 
-        var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
+        var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoFaker.EntityCreatedByUserId), CancellationToken.None);
 
         var log = Assert.Single(_loggerFactory.Sink.LogEntries);
         Assert.Equal(LogLevel.Error, log.LogLevel);
@@ -133,17 +135,17 @@ public class UpdateToDoOrderingCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_ReturnsSuccess_WhenUpdateAsyncSucceeds()
     {
-        var toDos = ToDoEntityFaker.Generate(5);
+        var toDos = ToDoFaker.Generate(5);
 
         var requestDictionary = toDos.ToDictionary(x => x.Id, y => y.Status.DisplayOrder!.Value);
 
         _toDoRepository.GetFilteredAsync(Arg.Any<GetToDosFilteredQuery>(), null, Arg.Any<CancellationToken>())
             .Returns(toDos);
 
-        _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDoEntity>>(), Arg.Any<CancellationToken>())
+        _toDoRepository.UpdateOrderAsync(Arg.Any<IReadOnlyList<ToDo>>(), Arg.Any<CancellationToken>())
             .Returns(5);
 
-        var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoEntityFaker.EntityCreatedByUserId), CancellationToken.None);
+        var actual = await _sut.ExecuteAsync(new(requestDictionary, ToDoFaker.EntityCreatedByUserId), CancellationToken.None);
 
         Assert.Empty(actual.ErrorsOrEmptyList);
         Assert.Equal(Result.Success, actual.Value);

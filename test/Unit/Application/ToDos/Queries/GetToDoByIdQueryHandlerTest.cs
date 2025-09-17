@@ -1,6 +1,7 @@
 using MELT;
-using MELT.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
@@ -56,7 +57,7 @@ public class GetToDoByIdQueryHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoFoundButUserIdDoesNotMatch()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
         var request = GetToDoByIdQueryFaker.Faker.Generate();
 
         _toDoRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -77,7 +78,7 @@ public class GetToDoByIdQueryHandlerTest
     [Fact]
     public async Task ExecuteAsync_ReturnsToDo_WhenToDoFoundAndUserIdMatches()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
 
         var request = GetToDoByIdQueryFaker.Faker
             .RuleFor(x => x.UserId, toDoEntity.CreatedByUserId)
@@ -89,6 +90,6 @@ public class GetToDoByIdQueryHandlerTest
 
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
 
-        Assert.Equal(toDoEntity.MapFromEntity(), actual.Value);
+        Assert.Equal(toDoEntity.MapFromDomainModel(), actual.Value);
     }
 }

@@ -7,7 +7,7 @@ namespace SourceName.Application.ToDos.Models;
 
 public static class ToDoNextResultToken
 {
-    public static ToDoEntity? DecodeToken(string? token)
+    public static ToDo? DecodeToken(string? token)
     {
         if (string.IsNullOrEmpty(token))
         {
@@ -16,10 +16,10 @@ public static class ToDoNextResultToken
 
         var bytes = Convert.FromBase64String(token);
         var json = Encoding.UTF8.GetString(bytes);
-        return JsonSerializer.Deserialize<ToDoEntity>(json);
+        return JsonSerializer.Deserialize<ToDo>(json);
     }
 
-    public static string EncodeToken(ToDoEntity? entity)
+    public static string EncodeToken(ToDo? entity)
     {
         if (entity is null)
         {

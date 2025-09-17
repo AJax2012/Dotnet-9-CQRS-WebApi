@@ -5,8 +5,8 @@ using FastEndpoints;
 using Microsoft.Extensions.Logging;
 
 using SourceName.Application.ToDos.Contracts;
+using SourceName.Application.ToDos.Models;
 using SourceName.Application.ToDos.Queries;
-using SourceName.Contracts.ToDos;
 using SourceName.Domain.ToDos;
 
 namespace SourceName.Application.ToDos.Commands;
@@ -41,7 +41,7 @@ public class CreateToDoCommandHandler(IToDosRepository toDoRepository, ILoggerFa
                 Title: null
             ), ct);
 
-        var toDo = new ToDoEntity(request.UserId, new(request.Title), toDoCount + 1);
+        var toDo = new ToDo(request.UserId, new(request.Title), toDoCount + 1);
 
         var rowsAffected = await _toDoRepository.CreateAsync(toDo, ct);
 

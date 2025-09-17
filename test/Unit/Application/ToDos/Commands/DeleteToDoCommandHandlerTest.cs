@@ -1,6 +1,7 @@
 using MELT;
-using MELT.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Domain.ToDos;
@@ -55,7 +56,7 @@ public class DeleteToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoExistsButUserIdDoesNotMatch()
     {
-        var entity = ToDoEntityFaker.Generate().First();
+        var entity = ToDoFaker.Generate().First();
         var command = DeleteToDoCommandFaker.Faker.Generate();
 
         _toDoRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -76,7 +77,7 @@ public class DeleteToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_CallsDeleteAsync_WhenToDoExistsAndUserIdMatches()
     {
-        var entity = ToDoEntityFaker.Generate().First();
+        var entity = ToDoFaker.Generate().First();
 
         var command = DeleteToDoCommandFaker.Faker
             .RuleFor(x => x.Id, entity.Id)
@@ -95,7 +96,7 @@ public class DeleteToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsSqlError_WhenDeleteAsyncFails()
     {
-        var entity = ToDoEntityFaker.Generate().First();
+        var entity = ToDoFaker.Generate().First();
 
         var command = DeleteToDoCommandFaker.Faker
             .RuleFor(x => x.Id, entity.Id)
@@ -122,7 +123,7 @@ public class DeleteToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_ReturnsSuccess_WhenDeleteAsyncSucceeds()
     {
-        var entity = ToDoEntityFaker.Generate().First();
+        var entity = ToDoFaker.Generate().First();
 
         var command = DeleteToDoCommandFaker.Faker
             .RuleFor(x => x.Id, entity.Id)

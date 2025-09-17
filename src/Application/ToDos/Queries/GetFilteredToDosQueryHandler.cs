@@ -43,7 +43,7 @@ public class GetFilteredToDosQueryHandler(IToDosRepository toDoRepository, ILogg
 
         var mappedToDos = filteredToDos
             .Take(request.Limit ?? filteredToDos.Count)
-            .Select(x => x.MapFromEntity())
+            .Select(x => x.MapFromDomainModel())
             .ToImmutableList();
 
         var hasNextPage = filteredToDos.Count > (request.Limit ?? filteredToDos.Count);

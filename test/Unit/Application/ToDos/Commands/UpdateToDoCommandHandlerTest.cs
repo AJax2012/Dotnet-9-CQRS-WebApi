@@ -1,6 +1,7 @@
 using MELT;
-using MELT.Xunit;
+
 using Microsoft.Extensions.Logging;
+
 using SourceName.Application.ToDos.Commands;
 using SourceName.Application.ToDos.Contracts;
 using SourceName.Application.ToDos.Models;
@@ -56,7 +57,7 @@ public class UpdateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsNotFound_WhenToDoExistsButUserIdDoesNotMatch()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
         var command = UpdateToDoCommandFaker.Faker.Generate();
 
         _toDoRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
@@ -77,7 +78,7 @@ public class UpdateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_CallsUpdateAsync_WhenToDoExistsAndUserIdMatches()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
 
         var request = UpdateToDoCommandFaker.Faker
             .RuleFor(x => x.Id, toDoEntity.Id)
@@ -90,7 +91,7 @@ public class UpdateToDoCommandHandlerTest
         await _sut.ExecuteAsync(request, CancellationToken.None);
 
         await _toDoRepository.Received()
-            .UpdateAsync(Arg.Is<ToDoEntity>(x =>
+            .UpdateAsync(Arg.Is<ToDo>(x =>
                     x.Title.Value == request.Title &&
                     x.Status.IsCompleted == request.IsCompleted),
                 CancellationToken.None);
@@ -99,7 +100,7 @@ public class UpdateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_LogsAndReturnsSqlError_WhenUpdateAsyncFails()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
 
         var request = UpdateToDoCommandFaker.Faker
             .RuleFor(x => x.Id, toDoEntity.Id)
@@ -109,7 +110,7 @@ public class UpdateToDoCommandHandlerTest
         _toDoRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(toDoEntity);
 
-        _toDoRepository.UpdateAsync(Arg.Any<ToDoEntity>(), Arg.Any<CancellationToken>())
+        _toDoRepository.UpdateAsync(Arg.Any<ToDo>(), Arg.Any<CancellationToken>())
             .Returns(0);
 
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
@@ -126,7 +127,7 @@ public class UpdateToDoCommandHandlerTest
     [Fact]
     public async Task ExecuteAsync_ReturnsToDo_WhenUpdateAsyncSucceeds()
     {
-        var toDoEntity = ToDoEntityFaker.Generate().First();
+        var toDoEntity = ToDoFaker.Generate().First();
 
         var request = UpdateToDoCommandFaker.Faker
             .RuleFor(x => x.Id, toDoEntity.Id)
@@ -136,7 +137,7 @@ public class UpdateToDoCommandHandlerTest
         _toDoRepository.GetByIdAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
             .Returns(toDoEntity);
 
-        _toDoRepository.UpdateAsync(Arg.Any<ToDoEntity>(), Arg.Any<CancellationToken>())
+        _toDoRepository.UpdateAsync(Arg.Any<ToDo>(), Arg.Any<CancellationToken>())
             .Returns(1);
 
         var actual = await _sut.ExecuteAsync(request, CancellationToken.None);
@@ -144,7 +145,7 @@ public class UpdateToDoCommandHandlerTest
         Assert.Empty(actual.ErrorsOrEmptyList);
 
         toDoEntity.Update(request.Title, request.IsCompleted);
-        var expected = toDoEntity.MapFromEntity();
+        var expected = toDoEntity.MapFromDomainModel();
 
         Assert.Equivalent(expected, actual.Value);
     }
